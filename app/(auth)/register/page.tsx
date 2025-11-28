@@ -6,7 +6,6 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 import { createUserDocument } from "@/lib/db/users";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -18,31 +17,46 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    console.log("[RegisterPage] Form submitted, attempting registration");
     setError(null);
     setSubmitting(true);
 
     try {
       // 1) Create Firebase Auth user
+      console.log("[RegisterPage] Step 1: Creating Firebase Auth user for:", email);
       const cred = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("[RegisterPage] Firebase Auth user created:", {
+        userId: cred.user.uid,
+        email: cred.user.email,
+      });
 
       // 2) Set displayName in Auth profile
       if (name) {
+        console.log("[RegisterPage] Step 2: Updating profile with displayName:", name);
         await updateProfile(cred.user, { displayName: name });
+        console.log("[RegisterPage] Profile updated successfully");
+      } else {
+        console.log("[RegisterPage] Step 2: Skipping profile update (no name provided)");
       }
 
       // 3) Create Firestore user document
+      console.log("[RegisterPage] Step 3: Creating Firestore user document");
       await createUserDocument({
         uid: cred.user.uid,
         email: cred.user.email,
         displayName: name || cred.user.displayName,
       });
+      console.log("[RegisterPage] Firestore user document created successfully");
 
       // 4) Redirect after successful signup
+      console.log("[RegisterPage] Registration successful, redirecting to dashboard");
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Register error", err);
+      console.error("[RegisterPage] Registration error:", err);
+      console.log("[RegisterPage] Error code:", err.code, "Error message:", err.message);
       setError(err.message || "Failed to register");
     } finally {
+      console.log("[RegisterPage] Registration attempt completed, setting submitting to false");
       setSubmitting(false);
     }
   }
@@ -104,9 +118,9 @@ export default function RegisterPage() {
 
         <p className="mt-4 text-sm text-center">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 underline">
+          <a href="/login" className="text-blue-600 underline">
             Log in
-          </Link>
+          </a>
         </p>
       </div>
     </main>

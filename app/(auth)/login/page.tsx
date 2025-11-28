@@ -5,7 +5,6 @@ import { FormEvent, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,16 +15,25 @@ export default function LoginPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    console.log("[LoginPage] Form submitted, attempting login");
     setError(null);
     setSubmitting(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      console.log("[LoginPage] Calling signInWithEmailAndPassword for:", email);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("[LoginPage] Login successful:", {
+        userId: userCredential.user.uid,
+        email: userCredential.user.email,
+      });
+      console.log("[LoginPage] Redirecting to dashboard");
       router.push("/dashboard");
     } catch (err: any) {
-      console.error("Login error", err);
+      console.error("[LoginPage] Login error:", err);
+      console.log("[LoginPage] Error code:", err.code, "Error message:", err.message);
       setError(err.message || "Failed to log in");
     } finally {
+      console.log("[LoginPage] Login attempt completed, setting submitting to false");
       setSubmitting(false);
     }
   }
@@ -75,9 +83,9 @@ export default function LoginPage() {
 
         <p className="mt-4 text-sm text-center">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-blue-600 underline">
+          <a href="/register" className="text-blue-600 underline">
             Sign up
-          </Link>
+          </a>
         </p>
       </div>
     </main>

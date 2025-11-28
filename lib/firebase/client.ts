@@ -14,9 +14,16 @@ const firebaseConfig = {
 };
 
 // Avoid re-initializing during hot reloads in dev
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const existingApps = getApps();
+console.log("[Firebase Client] Existing apps count:", existingApps.length);
+const app = !existingApps.length ? initializeApp(firebaseConfig) : getApp();
+console.log("[Firebase Client] Firebase app initialized:", {
+  appName: app.name,
+  projectId: firebaseConfig.projectId,
+});
 
 export const firebaseApp = app;
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+console.log("[Firebase Client] Firebase services initialized (auth, firestore, storage)");

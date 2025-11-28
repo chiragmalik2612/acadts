@@ -20,12 +20,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("[AuthContext] Setting up auth state listener");
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+      console.log("[AuthContext] Auth state changed:", {
+        hasUser: !!firebaseUser,
+        userId: firebaseUser?.uid,
+        email: firebaseUser?.email,
+      });
       setUser(firebaseUser);
       setLoading(false);
+      console.log("[AuthContext] Loading state set to false");
     });
 
-    return () => unsub();
+    return () => {
+      console.log("[AuthContext] Cleaning up auth state listener");
+      unsub();
+    };
   }, []);
 
   return (
