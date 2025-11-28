@@ -1,14 +1,20 @@
-// src/context/AuthContext.tsx
+// /context/AuthContext.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, onAuthStateChanged } from "firebase/auth";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { User, onAuthStateChanged, Unsubscribe } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 
-type AuthContextValue = {
+interface AuthContextValue {
   user: User | null;
   loading: boolean;
-};
+}
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
@@ -21,7 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     console.log("[AuthContext] Setting up auth state listener");
-    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+    
+    const handleAuthStateChange = (firebaseUser: User | null) => {
       console.log("[AuthContext] Auth state changed:", {
         hasUser: !!firebaseUser,
         userId: firebaseUser?.uid,
@@ -30,11 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(firebaseUser);
       setLoading(false);
       console.log("[AuthContext] Loading state set to false");
-    });
+    };
+
+    const unsubscribe: Unsubscribe = onAuthStateChanged(auth, handleAuthStateChange);
 
     return () => {
       console.log("[AuthContext] Cleaning up auth state listener");
-      unsub();
+      unsubscribe();
     };
   }, []);
 
@@ -45,6 +54,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
+export function useAuth(): AuthContextValue {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }

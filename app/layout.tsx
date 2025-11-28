@@ -4,14 +4,18 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "My App",
-  description: "Next.js + Firebase app",
+  title: {
+    default: "AcadTS - Academic Test System",
+    template: "%s | AcadTS",
+  },
+  description: "Academic test system built with Next.js and Firebase",
+  keywords: ["academic", "tests", "education", "learning"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className="antialiased">
         <AuthProvider>
           {children}
         </AuthProvider>
