@@ -9,6 +9,7 @@ import { getQuestionById, updateQuestion } from "@/lib/db/questions";
 import type { QuestionType, DifficultyLevel, QuestionInput } from "@/lib/types/question";
 import { sanitizeInput } from "@/lib/utils/validation";
 import { uploadImage, validateImageFile, deleteImage, getImageStorageConfig } from "@/lib/utils/imageStorage";
+import RichTextEditor from "@/components/RichTextEditor";
 
 const QUESTION_TYPES: { value: QuestionType; label: string }[] = [
   { value: "mcq_single", label: "MCQ (Single Correct)" },
@@ -33,11 +34,11 @@ export default function EditQuestionPage() {
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [tagsInput, setTagsInput] = useState("");
-  const [text, setText] = useState("");
+  const [text, setText] = useState(""); // TipTap HTML
   const [options, setOptions] = useState<string[]>(["", "", "", ""]);
   const [correctOptions, setCorrectOptions] = useState<number[]>([]);
   const [correctAnswer, setCorrectAnswer] = useState<string>("");
-  const [explanation, setExplanation] = useState("");
+  const [explanation, setExplanation] = useState(""); // TipTap HTML
   const [marks, setMarks] = useState<string>("4");
   const [penalty, setPenalty] = useState<string>("0");
   const [difficulty, setDifficulty] = useState<DifficultyLevel>("easy");
@@ -73,14 +74,13 @@ export default function EditQuestionPage() {
         setSubject(question.subject);
         setTopic(question.topic);
         setTagsInput(question.tags.join(", "));
-        setText(question.text);
+        setText(question.text); // existing HTML content
         setExplanation(question.explanation || "");
         setMarks(question.marks.toString());
         setPenalty(question.penalty.toString());
         setDifficulty(question.difficulty);
 
         if (question.options && question.options.length > 0) {
-          // Pad options array to at least 4
           const paddedOptions = [...question.options];
           while (paddedOptions.length < 4) {
             paddedOptions.push("");
@@ -136,47 +136,52 @@ export default function EditQuestionPage() {
     });
   };
 
-  const handleCorrectOptionToggle = useCallback((index: number) => {
-    if (type === "mcq_single") {
-      setCorrectOptions([index]);
-    } else if (type === "mcq_multiple") {
-      setCorrectOptions((prev) =>
-        prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-      );
-    }
-  }, [type]);
-
-  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      setImageFile(null);
-      if (!originalImageUrl) {
-        setImagePreview(null);
-      } else {
-        setImagePreview(originalImageUrl);
+  const handleCorrectOptionToggle = useCallback(
+    (index: number) => {
+      if (type === "mcq_single") {
+        setCorrectOptions([index]);
+      } else if (type === "mcq_multiple") {
+        setCorrectOptions((prev) =>
+          prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+        );
       }
-      return;
-    }
+    },
+    [type]
+  );
 
-    const validation = validateImageFile(file);
-    if (!validation.isValid) {
-      setError(validation.error || "Invalid image file");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+  const handleImageChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) {
+        setImageFile(null);
+        if (!originalImageUrl) {
+          setImagePreview(null);
+        } else {
+          setImagePreview(originalImageUrl);
+        }
+        return;
       }
-      return;
-    }
 
-    setImageFile(file);
-    setError(null);
+      const validation = validateImageFile(file);
+      if (!validation.isValid) {
+        setError(validation.error || "Invalid image file");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        return;
+      }
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  }, [originalImageUrl]);
+      setImageFile(file);
+      setError(null);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    },
+    [originalImageUrl]
+  );
 
   const handleRemoveImage = useCallback(async () => {
     setImageFile(null);
@@ -186,14 +191,12 @@ export default function EditQuestionPage() {
       fileInputRef.current.value = "";
     }
 
-    // Delete original image from storage if it exists (only for Firebase Storage, not base64)
-    if (originalImageUrl && !originalImageUrl.startsWith('data:')) {
+    if (originalImageUrl && !originalImageUrl.startsWith("data:")) {
       try {
-        await deleteImage(originalImageUrl, 'auto');
+        await deleteImage(originalImageUrl, "auto");
         console.log("[EditQuestionPage] Original image deleted");
       } catch (err) {
         console.error("[EditQuestionPage] Error deleting original image:", err);
-        // Don't block the UI if deletion fails
       }
     }
   }, [originalImageUrl]);
@@ -208,10 +211,9 @@ export default function EditQuestionPage() {
         return;
       }
 
-      // Basic validation
       const sanitizedSubject = sanitizeInput(subject).trim();
       const sanitizedTopic = sanitizeInput(topic).trim();
-      const sanitizedText = text.trim();
+      const sanitizedText = text.trim(); // TipTap HTML
       const sanitizedExplanation = explanation.trim() || "";
 
       if (!sanitizedSubject) {
@@ -249,11 +251,11 @@ export default function EditQuestionPage() {
 
       if (type === "mcq_single" || type === "mcq_multiple") {
         const trimmedOptions = options.map((opt) => opt.trim());
-        
+
         const originalToNewIndex: Map<number, number> = new Map();
         const nonEmptyOptions: string[] = [];
         let newIndex = 0;
-        
+
         trimmedOptions.forEach((opt, originalIdx) => {
           if (opt.length > 0) {
             originalToNewIndex.set(originalIdx, newIndex);
@@ -312,9 +314,8 @@ export default function EditQuestionPage() {
       try {
         // Handle image upload/update
         let finalImageUrl: string | null = null;
-        
+
         if (imageFile) {
-          // New image uploaded - delete old one if exists
           if (originalImageUrl) {
             try {
               await deleteImage(originalImageUrl);
@@ -323,8 +324,7 @@ export default function EditQuestionPage() {
               console.warn("[EditQuestionPage] Could not delete old image:", err);
             }
           }
-          
-          // Upload new image
+
           console.log("[EditQuestionPage] Uploading new image...");
           const config = getImageStorageConfig();
           const uploadResult = await uploadImage(imageFile, { ...config, folder: "questions" });
@@ -334,10 +334,8 @@ export default function EditQuestionPage() {
             provider: uploadResult.provider,
           });
         } else if (imageUrl) {
-          // Keep existing image
           finalImageUrl = imageUrl;
         } else if (originalImageUrl) {
-          // Image was removed - delete from storage
           try {
             await deleteImage(originalImageUrl);
             console.log("[EditQuestionPage] Image removed and deleted from storage");
@@ -352,7 +350,7 @@ export default function EditQuestionPage() {
           subject: sanitizedSubject,
           topic: sanitizedTopic,
           tags,
-          text: sanitizedText,
+          text: sanitizedText, // TipTap HTML
           imageUrl: finalImageUrl,
           options: finalOptions,
           correctOptions: finalCorrectOptions,
@@ -593,17 +591,16 @@ export default function EditQuestionPage() {
               </div>
             </div>
 
-            {/* Question Text */}
+            {/* Question Text - TipTap */}
             <div>
               <label className="block mb-1 text-sm font-medium text-gray-700">
                 Question Text
               </label>
-              <textarea
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent min-h-[120px]"
+              <RichTextEditor
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={setText}
                 placeholder="Write the question statement here..."
-                required
+                minHeight="160px"
               />
             </div>
 
@@ -714,16 +711,16 @@ export default function EditQuestionPage() {
               </div>
             )}
 
-            {/* Explanation */}
+            {/* Explanation - TipTap */}
             <div>
               <label className="block mb-1 text-sm font-medium text-gray-700">
                 Explanation (optional)
               </label>
-              <textarea
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent min-h-[80px]"
+              <RichTextEditor
                 value={explanation}
-                onChange={(e) => setExplanation(e.target.value)}
+                onChange={setExplanation}
                 placeholder="Explanation, solution steps, or reasoning..."
+                minHeight="120px"
               />
             </div>
 
@@ -750,4 +747,3 @@ export default function EditQuestionPage() {
     </main>
   );
 }
-

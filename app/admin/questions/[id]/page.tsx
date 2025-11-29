@@ -1,13 +1,26 @@
-// app/admin/questions/[id]/page.tsx
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useUserProfile } from "@/lib/hooks/useUserProfile";
 import { getQuestionById } from "@/lib/db/questions";
 import type { Question } from "@/lib/types/question";
 import Link from "next/link";
+
+// TipTap for read-only rendering
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import LinkExtension from "@tiptap/extension-link";
+import Underline from "@tiptap/extension-underline";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import Placeholder from "@tiptap/extension-placeholder";
+import { MathExtension } from "@aarkue/tiptap-math-extension";
 
 export default function ViewQuestionPage() {
   const router = useRouter();
@@ -19,6 +32,96 @@ export default function ViewQuestionPage() {
   const [question, setQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    // Load KaTeX CSS for math styling
+    if (typeof window !== "undefined") {
+      const existing = document.querySelector('link[href*="katex.min.css"]');
+      if (!existing) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href =
+          "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css";
+        link.crossOrigin = "anonymous";
+        document.head.appendChild(link);
+      }
+    }
+  }, []);
+
+  const extensions = useMemo(
+    () => [
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3, 4, 5, 6] },
+        codeBlock: {
+          HTMLAttributes: { class: "code-block" },
+        },
+        // we let Link/Underline come from separate extensions, but this is fine
+      }),
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: { class: "editor-image" },
+      }),
+      LinkExtension.configure({
+        openOnClick: true,
+        HTMLAttributes: { class: "editor-link" },
+      }),
+      Underline,
+      Subscript,
+      Superscript,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      TextStyle,
+      Color,
+      Placeholder.configure({
+        placeholder: "",
+      }),
+      MathExtension.configure({
+        evaluation: false,
+        addInlineMath: true,
+        renderTextMode: "raw-latex",
+        katexOptions: {
+          throwOnError: false,
+          errorColor: "#cc0000",
+        },
+      }),
+    ],
+    []
+  );
+
+  // Read-only editors for question text and explanation
+  const questionEditor = useEditor({
+    extensions,
+    content: "",
+    editable: false,
+    immediatelyRender: false, // 👈 important for Next/SSR
+    autofocus: false,
+  });
+
+  const explanationEditor = useEditor({
+    extensions,
+    content: "",
+    editable: false,
+    immediatelyRender: false, // 👈 important for Next/SSR
+    autofocus: false,
+  });
+
+  // When question loads, set content
+  useEffect(() => {
+    if (questionEditor && question?.text) {
+      questionEditor.commands.setContent(question.text);
+    }
+  }, [questionEditor, question?.text]);
+
+  useEffect(() => {
+    if (explanationEditor && question?.explanation) {
+      explanationEditor.commands.setContent(question.explanation);
+    }
+  }, [explanationEditor, question?.explanation]);
 
   const fetchQuestion = useCallback(async () => {
     if (!questionId) return;
@@ -67,7 +170,9 @@ export default function ViewQuestionPage() {
     router.push(`/admin/questions/${questionId}/edit`);
   }, [router, questionId]);
 
-  if (authLoading || profileLoading) {
+  // ---------- Render ----------
+
+  if (authLoading || profileLoading || !isMounted) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="p-4 text-gray-600">Checking admin access...</p>
@@ -83,7 +188,7 @@ export default function ViewQuestionPage() {
     );
   }
 
-  if (loading) {
+  if (loading || !questionEditor) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="p-4 text-gray-600">Loading question...</p>
@@ -97,7 +202,9 @@ export default function ViewQuestionPage() {
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="bg-white border border-red-200 rounded-lg p-6">
             <h1 className="text-xl font-semibold text-gray-900 mb-2">Error</h1>
-            <p className="text-sm text-red-600 mb-4">{error || "Question not found"}</p>
+            <p className="text-sm text-red-600 mb-4">
+              {error || "Question not found"}
+            </p>
             <Link
               href="/admin/questions"
               className="text-sm text-blue-600 hover:text-blue-800 underline"
@@ -121,7 +228,9 @@ export default function ViewQuestionPage() {
             >
               ← Back to Questions
             </Link>
-            <h1 className="text-2xl font-semibold text-gray-900">View Question</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              View Question
+            </h1>
           </div>
           <button
             onClick={handleEdit}
@@ -137,11 +246,15 @@ export default function ViewQuestionPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-4 border-b border-gray-200">
             <div>
               <p className="text-xs text-gray-500 mb-1">Subject</p>
-              <p className="text-sm font-medium text-gray-900">{question.subject}</p>
+              <p className="text-sm font-medium text-gray-900">
+                {question.subject}
+              </p>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Topic</p>
-              <p className="text-sm font-medium text-gray-900">{question.topic}</p>
+              <p className="text-sm font-medium text-gray-900">
+                {question.topic}
+              </p>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Type</p>
@@ -164,20 +277,21 @@ export default function ViewQuestionPage() {
                     : "bg-red-50 text-red-700"
                 }`}
               >
-                {question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)}
+                {question.difficulty.charAt(0).toUpperCase() +
+                  question.difficulty.slice(1)}
               </span>
             </div>
           </div>
 
-          {/* Question Text */}
+          {/* Question Text rendered by TipTap (read-only) */}
           <div>
             <p className="text-xs text-gray-500 mb-2">Question</p>
-            <div className="text-sm text-gray-900 whitespace-pre-wrap bg-gray-50 rounded p-4">
-              {question.text}
+            <div className="text-sm text-gray-900 bg-gray-50 rounded p-4">
+              <EditorContent editor={questionEditor} />
             </div>
           </div>
 
-          {/* Question Image */}
+          {/* Question Image (optional, in case you still store a separate URL) */}
           {question.imageUrl && (
             <div>
               <p className="text-xs text-gray-500 mb-2">Image</p>
@@ -187,7 +301,10 @@ export default function ViewQuestionPage() {
                   alt="Question illustration"
                   className="w-full h-auto max-h-96 object-contain bg-gray-50"
                   onError={(e) => {
-                    console.error("[ViewQuestionPage] Error loading image:", question.imageUrl);
+                    console.error(
+                      "[ViewQuestionPage] Error loading image:",
+                      question.imageUrl
+                    );
                     (e.target as HTMLImageElement).style.display = "none";
                   }}
                 />
@@ -196,7 +313,8 @@ export default function ViewQuestionPage() {
           )}
 
           {/* Options (for MCQs) */}
-          {(question.type === "mcq_single" || question.type === "mcq_multiple") &&
+          {(question.type === "mcq_single" ||
+            question.type === "mcq_multiple") &&
             question.options &&
             question.options.length > 0 && (
               <div>
@@ -216,9 +334,13 @@ export default function ViewQuestionPage() {
                         <span className="text-sm font-medium text-gray-600 min-w-[2rem]">
                           {String.fromCharCode(65 + index)}.
                         </span>
-                        <span className="text-sm text-gray-900 flex-1">{option}</span>
+                        <span className="text-sm text-gray-900 flex-1">
+                          {option}
+                        </span>
                         {isCorrect && (
-                          <span className="text-xs font-medium text-green-700">✓ Correct</span>
+                          <span className="text-xs font-medium text-green-700">
+                            ✓ Correct
+                          </span>
                         )}
                       </div>
                     );
@@ -237,12 +359,12 @@ export default function ViewQuestionPage() {
             </div>
           )}
 
-          {/* Explanation */}
-          {question.explanation && (
+          {/* Explanation rendered by TipTap (read-only) */}
+          {question.explanation && explanationEditor && (
             <div>
               <p className="text-xs text-gray-500 mb-2">Explanation</p>
-              <div className="text-sm text-gray-700 whitespace-pre-wrap bg-blue-50 border border-blue-200 rounded p-4">
-                {question.explanation}
+              <div className="text-sm text-gray-700 bg-blue-50 border border-blue-200 rounded p-4">
+                <EditorContent editor={explanationEditor} />
               </div>
             </div>
           )}
@@ -251,7 +373,9 @@ export default function ViewQuestionPage() {
           <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
             <div>
               <p className="text-xs text-gray-500 mb-1">Marks</p>
-              <p className="text-sm font-medium text-gray-900">{question.marks}</p>
+              <p className="text-sm font-medium text-gray-900">
+                {question.marks}
+              </p>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Penalty</p>
@@ -282,4 +406,3 @@ export default function ViewQuestionPage() {
     </main>
   );
 }
-

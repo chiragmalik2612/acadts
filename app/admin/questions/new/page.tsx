@@ -9,6 +9,7 @@ import { createQuestion } from "@/lib/db/questions";
 import type { QuestionType, DifficultyLevel, QuestionInput } from "@/lib/types/question";
 import { sanitizeInput } from "@/lib/utils/validation";
 import { uploadImage, validateImageFile, getImageStorageConfig } from "@/lib/utils/imageStorage";
+import RichTextEditor from "@/components/RichTextEditor";
 
 const QUESTION_TYPES: { value: QuestionType; label: string }[] = [
   { value: "mcq_single", label: "MCQ (Single Correct)" },
@@ -31,11 +32,11 @@ export default function NewQuestionPage() {
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [tagsInput, setTagsInput] = useState("");
-  const [text, setText] = useState("");
+  const [text, setText] = useState(""); // now HTML from TipTap
   const [options, setOptions] = useState<string[]>(["", "", "", ""]);
   const [correctOptions, setCorrectOptions] = useState<number[]>([]);
   const [correctAnswer, setCorrectAnswer] = useState<string>("");
-  const [explanation, setExplanation] = useState("");
+  const [explanation, setExplanation] = useState(""); // now HTML from TipTap
   const [marks, setMarks] = useState<string>("4");
   const [penalty, setPenalty] = useState<string>("0");
   const [difficulty, setDifficulty] = useState<DifficultyLevel>("easy");
@@ -55,15 +56,18 @@ export default function NewQuestionPage() {
     });
   };
 
-  const handleCorrectOptionToggle = useCallback((index: number) => {
-    if (type === "mcq_single") {
-      setCorrectOptions([index]);
-    } else if (type === "mcq_multiple") {
-      setCorrectOptions((prev) =>
-        prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-      );
-    }
-  }, [type]);
+  const handleCorrectOptionToggle = useCallback(
+    (index: number) => {
+      if (type === "mcq_single") {
+        setCorrectOptions([index]);
+      } else if (type === "mcq_multiple") {
+        setCorrectOptions((prev) =>
+          prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+        );
+      }
+    },
+    [type]
+  );
 
   // Reset correct options and answer when question type changes
   useEffect(() => {
@@ -88,7 +92,7 @@ export default function NewQuestionPage() {
       // Basic validation
       const sanitizedSubject = sanitizeInput(subject).trim();
       const sanitizedTopic = sanitizeInput(topic).trim();
-      const sanitizedText = text.trim();
+      const sanitizedText = text.trim(); // TipTap HTML string
       const sanitizedExplanation = explanation.trim() || "";
 
       if (!sanitizedSubject) {
@@ -126,12 +130,12 @@ export default function NewQuestionPage() {
 
       if (type === "mcq_single" || type === "mcq_multiple") {
         const trimmedOptions = options.map((opt) => opt.trim());
-        
+
         // Build a map: original index -> new index after filtering
         const originalToNewIndex: Map<number, number> = new Map();
         const nonEmptyOptions: string[] = [];
         let newIndex = 0;
-        
+
         trimmedOptions.forEach((opt, originalIdx) => {
           if (opt.length > 0) {
             originalToNewIndex.set(originalIdx, newIndex);
@@ -155,11 +159,9 @@ export default function NewQuestionPage() {
         // Map original indices to new indices after filtering
         const validIndices = correctOptions
           .filter((originalIdx) => {
-            // Check if this original index corresponds to a non-empty option
             return originalToNewIndex.has(originalIdx);
           })
           .map((originalIdx) => {
-            // Get the new index from the map
             return originalToNewIndex.get(originalIdx)!;
           });
 
@@ -207,27 +209,26 @@ export default function NewQuestionPage() {
             provider: uploadResult.provider,
           });
         } else if (imageUrl) {
-          // If image URL already exists (from previous upload), use it
           finalImageUrl = imageUrl;
         }
 
-      const input: QuestionInput = {
-        type,
-        subject: sanitizedSubject,
-        topic: sanitizedTopic,
-        tags,
-        text: sanitizedText,
-        imageUrl: finalImageUrl,
-        options: finalOptions,
-        correctOptions: finalCorrectOptions,
-        correctAnswer: finalCorrectAnswer,
-        explanation: sanitizedExplanation || null,
-        marks: parsedMarks,
-        penalty: parsedPenalty,
-        difficulty,
-      };
+        const input: QuestionInput = {
+          type,
+          subject: sanitizedSubject,
+          topic: sanitizedTopic,
+          tags,
+          text: sanitizedText, // TipTap HTML
+          imageUrl: finalImageUrl,
+          options: finalOptions,
+          correctOptions: finalCorrectOptions,
+          correctAnswer: finalCorrectAnswer,
+          explanation: sanitizedExplanation || null, // TipTap HTML or null
+          marks: parsedMarks,
+          penalty: parsedPenalty,
+          difficulty,
+        };
 
-      console.log("[NewQuestionPage] Final QuestionInput:", input);
+        console.log("[NewQuestionPage] Final QuestionInput:", input);
 
         const id = await createQuestion(input, user.uid);
         console.log("[NewQuestionPage] Question created with id:", id);
@@ -485,17 +486,16 @@ export default function NewQuestionPage() {
               </div>
             </div>
 
-            {/* Question Text */}
+            {/* Question Text - TipTap */}
             <div>
               <label className="block mb-1 text-sm font-medium text-gray-700">
                 Question Text
               </label>
-              <textarea
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent min-h-[120px]"
+              <RichTextEditor
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={setText}
                 placeholder="Write the question statement here..."
-                required
+                minHeight="160px"
               />
             </div>
 
@@ -604,16 +604,16 @@ export default function NewQuestionPage() {
               </div>
             )}
 
-            {/* Explanation */}
+            {/* Explanation - TipTap */}
             <div>
               <label className="block mb-1 text-sm font-medium text-gray-700">
                 Explanation (optional)
               </label>
-              <textarea
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent min-h-[80px]"
+              <RichTextEditor
                 value={explanation}
-                onChange={(e) => setExplanation(e.target.value)}
+                onChange={setExplanation}
                 placeholder="Explanation, solution steps, or reasoning..."
+                minHeight="120px"
               />
             </div>
 
