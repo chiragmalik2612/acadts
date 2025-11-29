@@ -61,7 +61,7 @@ export default function AdminQuestionsPage() {
   const handleDelete = useCallback(
     async (id: string) => {
       const q = questions.find((q) => q.id === id);
-      const label = q ? `${q.subject} / ${q.topic}` : id;
+      const label = q ? `${q.subject} / ${q.chapter || 'N/A'} / ${q.topic} / ${q.subtopic || 'N/A'}` : id;
 
       const confirmed = typeof window !== "undefined"
         ? window.confirm(
@@ -178,7 +178,13 @@ export default function AdminQuestionsPage() {
                     Subject
                   </th>
                   <th className="text-left px-4 py-2 font-medium text-gray-700">
+                    Chapter
+                  </th>
+                  <th className="text-left px-4 py-2 font-medium text-gray-700">
                     Topic
+                  </th>
+                  <th className="text-left px-4 py-2 font-medium text-gray-700">
+                    Subtopic
                   </th>
                   <th className="text-left px-4 py-2 font-medium text-gray-700">
                     Type
@@ -201,7 +207,9 @@ export default function AdminQuestionsPage() {
                     className="border-b last:border-b-0 border-gray-100"
                   >
                     <td className="px-4 py-2 text-gray-900">{q.subject}</td>
+                    <td className="px-4 py-2 text-gray-700">{q.chapter || 'N/A'}</td>
                     <td className="px-4 py-2 text-gray-700">{q.topic}</td>
+                    <td className="px-4 py-2 text-gray-700">{q.subtopic || 'N/A'}</td>
                     <td className="px-4 py-2 text-gray-700">
                       {q.type === "mcq_single"
                         ? "MCQ (Single)"

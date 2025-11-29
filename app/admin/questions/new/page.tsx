@@ -8,6 +8,16 @@ import { createQuestion } from "@/lib/db/questions";
 import type { QuestionType, DifficultyLevel, QuestionInput } from "@/lib/types/question";
 import { sanitizeInput } from "@/lib/utils/validation";
 import RichTextEditor from "@/components/RichTextEditor";
+import { buildImageFolderPath } from "@/lib/utils/imageStorage";
+import {
+  getSubjects,
+  getChaptersBySubject,
+  getTopicsByChapter,
+  getSubtopicsByTopic,
+  type Subject,
+  type Chapter,
+  type Topic,
+} from "@/lib/utils/subjectData";
 
 const QUESTION_TYPES: { value: QuestionType; label: string }[] = [
   { value: "mcq_single", label: "MCQ (Single Correct)" },
@@ -27,9 +37,20 @@ export default function NewQuestionPage() {
   const { role, loading: profileLoading } = useUserProfile();
 
   const [type, setType] = useState<QuestionType>("mcq_single");
-  const [subject, setSubject] = useState("");
-  const [topic, setTopic] = useState("");
+  const [subjectId, setSubjectId] = useState("");
+  const [subjectName, setSubjectName] = useState("");
+  const [chapterId, setChapterId] = useState("");
+  const [chapterName, setChapterName] = useState("");
+  const [topicId, setTopicId] = useState("");
+  const [topicName, setTopicName] = useState("");
+  const [subtopic, setSubtopic] = useState("");
   const [tagsInput, setTagsInput] = useState("");
+
+  // Load subjects data
+  const subjects = getSubjects();
+  const chapters = subjectId ? getChaptersBySubject(subjectId) : [];
+  const topics = subjectId && chapterId ? getTopicsByChapter(subjectId, chapterId) : [];
+  const subtopics = subjectId && chapterId && topicId ? getSubtopicsByTopic(subjectId, chapterId, topicId) : [];
   const [text, setText] = useState(""); // TipTap HTML
   const [options, setOptions] = useState<string[]>(["", "", "", ""]);
   const [correctOptions, setCorrectOptions] = useState<number[]>([]);
@@ -73,6 +94,49 @@ export default function NewQuestionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
+  // Reset dependent dropdowns when parent changes
+  useEffect(() => {
+    setChapterId("");
+    setChapterName("");
+    setTopicId("");
+    setTopicName("");
+    setSubtopic("");
+  }, [subjectId]);
+
+  useEffect(() => {
+    setTopicId("");
+    setTopicName("");
+    setSubtopic("");
+  }, [chapterId]);
+
+  useEffect(() => {
+    setSubtopic("");
+  }, [topicId]);
+
+  // Handle subject change
+  const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    setSubjectId(selectedId);
+    const selectedSubject = subjects.find(s => s.id === selectedId);
+    setSubjectName(selectedSubject?.name || "");
+  };
+
+  // Handle chapter change
+  const handleChapterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    setChapterId(selectedId);
+    const selectedChapter = chapters.find(c => c.id === selectedId);
+    setChapterName(selectedChapter?.name || "");
+  };
+
+  // Handle topic change
+  const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    setTopicId(selectedId);
+    const selectedTopic = topics.find(t => t.id === selectedId);
+    setTopicName(selectedTopic?.name || "");
+  };
+
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -84,18 +148,30 @@ export default function NewQuestionPage() {
       }
 
       // Basic validation
-      const sanitizedSubject = sanitizeInput(subject).trim();
-      const sanitizedTopic = sanitizeInput(topic).trim();
+      const sanitizedSubject = sanitizeInput(subjectName).trim();
+      const sanitizedChapter = sanitizeInput(chapterName).trim();
+      const sanitizedTopic = sanitizeInput(topicName).trim();
+      const sanitizedSubtopic = sanitizeInput(subtopic).trim();
       const sanitizedText = text.trim(); // TipTap HTML
       const sanitizedExplanation = explanation.trim() || "";
 
-      if (!sanitizedSubject) {
+      if (!subjectId || !sanitizedSubject) {
         setError("Subject is required.");
         return;
       }
 
-      if (!sanitizedTopic) {
+      if (!chapterId || !sanitizedChapter) {
+        setError("Chapter is required.");
+        return;
+      }
+
+      if (!topicId || !sanitizedTopic) {
         setError("Topic is required.");
+        return;
+      }
+
+      if (!sanitizedSubtopic) {
+        setError("Subtopic is required.");
         return;
       }
 
@@ -190,7 +266,9 @@ export default function NewQuestionPage() {
         const input: QuestionInput = {
           type,
           subject: sanitizedSubject,
+          chapter: sanitizedChapter,
           topic: sanitizedTopic,
+          subtopic: sanitizedSubtopic,
           tags,
           text: sanitizedText, // TipTap HTML
           // imageUrl removed: all images should be inside text via TipTap
@@ -219,8 +297,13 @@ export default function NewQuestionPage() {
     },
     [
       user,
-      subject,
-      topic,
+      subjectId,
+      subjectName,
+      chapterId,
+      chapterName,
+      topicId,
+      topicName,
+      subtopic,
       text,
       explanation,
       tagsInput,
@@ -299,35 +382,108 @@ export default function NewQuestionPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            {/* Subject + Topic */}
+            {/* Subject + Type */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Subject
+                  Subject <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  placeholder="e.g. Physics"
+                  value={subjectId}
+                  onChange={handleSubjectChange}
                   required
-                />
+                >
+                  <option value="">Select Subject</option>
+                  {subjects.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Topic
+                  Question Type <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                  placeholder="e.g. Kinematics"
+                  value={type}
+                  onChange={(e) => setType(e.target.value as QuestionType)}
                   required
-                />
+                >
+                  {QUESTION_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
               </div>
+            </div>
+
+            {/* Chapter + Topic */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Chapter <span className="text-red-500">*</span>
+                </label>
+                <select
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  value={chapterId}
+                  onChange={handleChapterChange}
+                  disabled={!subjectId}
+                  required
+                >
+                  <option value="">{subjectId ? "Select Chapter" : "Select Subject First"}</option>
+                  {chapters.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Topic <span className="text-red-500">*</span>
+                </label>
+                <select
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  value={topicId}
+                  onChange={handleTopicChange}
+                  disabled={!chapterId}
+                  required
+                >
+                  <option value="">{chapterId ? "Select Topic" : "Select Chapter First"}</option>
+                  {topics.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Subtopic */}
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">
+                Subtopic <span className="text-red-500">*</span>
+              </label>
+              <select
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                value={subtopic}
+                onChange={(e) => setSubtopic(e.target.value)}
+                disabled={!topicId}
+                required
+              >
+                <option value="">{topicId ? "Select Subtopic" : "Select Topic First"}</option>
+                {subtopics.map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Tags */}
@@ -347,25 +503,8 @@ export default function NewQuestionPage() {
               </p>
             </div>
 
-            {/* Type + Difficulty */}
+            {/* Difficulty */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Question Type
-                </label>
-                <select
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  value={type}
-                  onChange={(e) => setType(e.target.value as QuestionType)}
-                >
-                  {QUESTION_TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
                   Difficulty
@@ -428,6 +567,11 @@ export default function NewQuestionPage() {
                 onChange={setText}
                 placeholder="Write the question statement here..."
                 minHeight="200px"
+                imageFolder={
+                  subjectName && chapterName && topicName && subtopic && type
+                    ? buildImageFolderPath(subjectName, chapterName, topicName, subtopic, type)
+                    : undefined
+                }
               />
             </div>
 
@@ -503,6 +647,11 @@ export default function NewQuestionPage() {
                 onChange={setExplanation}
                 placeholder="Explanation, solution steps, or reasoning..."
                 minHeight="150px"
+                imageFolder={
+                  subjectName && chapterName && topicName && subtopic && type
+                    ? buildImageFolderPath(subjectName, chapterName, topicName, subtopic, type)
+                    : undefined
+                }
               />
             </div>
 

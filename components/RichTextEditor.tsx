@@ -26,6 +26,7 @@ interface RichTextEditorProps {
   className?: string;
   minHeight?: string;
   disabled?: boolean;
+  imageFolder?: string; // Optional folder path for organizing images
 }
 
 // Toolbar button component
@@ -206,6 +207,7 @@ export default function RichTextEditor({
   className = "",
   minHeight = "200px",
   disabled = false,
+  imageFolder,
 }: RichTextEditorProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -335,6 +337,10 @@ export default function RichTextEditor({
 
       try {
         const config = getImageStorageConfig();
+        // Use provided imageFolder if available, otherwise use default from config
+        if (imageFolder) {
+          config.folder = imageFolder;
+        }
         const uploadResult = await uploadImage(file, config);
 
         editor

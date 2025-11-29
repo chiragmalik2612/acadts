@@ -276,6 +276,37 @@ export function getImageStorageConfig(): ImageStorageConfig {
 }
 
 /**
+ * Build organized folder path for images based on question metadata
+ * Format: questions/{subject}/{chapter}/{topic}/{subtopic}/{type}
+ */
+export function buildImageFolderPath(
+  subject: string,
+  chapter: string,
+  topic: string,
+  subtopic: string,
+  type: string
+): string {
+  // Sanitize path components (remove special characters, spaces, etc.)
+  const sanitize = (str: string | undefined | null): string => {
+    if (!str || typeof str !== 'string') return 'uncategorized';
+    return str
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
+      .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+      || 'uncategorized';
+  };
+
+  const sanitizedSubject = sanitize(subject);
+  const sanitizedChapter = sanitize(chapter);
+  const sanitizedTopic = sanitize(topic);
+  const sanitizedSubtopic = sanitize(subtopic);
+  const sanitizedType = sanitize(type);
+
+  return `questions/${sanitizedSubject}/${sanitizedChapter}/${sanitizedTopic}/${sanitizedSubtopic}/${sanitizedType}`;
+}
+
+/**
  * Validate image file before upload
  */
 export function validateImageFile(file: File): { isValid: boolean; error?: string } {

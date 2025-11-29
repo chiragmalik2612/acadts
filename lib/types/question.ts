@@ -9,7 +9,9 @@ export interface QuestionDoc {
   // Core classification
   type: QuestionType;
   subject: string;              // e.g. "Physics"
+  chapter?: string;              // e.g. "Mechanics" (optional for backward compatibility)
   topic: string;                // e.g. "Kinematics"
+  subtopic?: string;             // e.g. "1D Motion" (optional for backward compatibility)
   tags: string[];               // e.g. ["1D-motion", "JEE Main"]
 
   // Question content
@@ -40,7 +42,9 @@ export interface Question extends QuestionDoc {
 export interface QuestionInput {
   type: QuestionType;
   subject: string;
+  chapter: string;
   topic: string;
+  subtopic: string;
   tags: string[];
   text: string;
   imageUrl?: string | null;

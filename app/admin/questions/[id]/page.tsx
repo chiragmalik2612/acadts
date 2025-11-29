@@ -236,7 +236,7 @@ export default function ViewQuestionPage() {
 
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm space-y-6">
           {/* Metadata */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-4 border-b border-gray-200">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 pb-4 border-b border-gray-200">
             <div>
               <p className="text-xs text-gray-500 mb-1">Subject</p>
               <p className="text-sm font-medium text-gray-900">
@@ -244,9 +244,21 @@ export default function ViewQuestionPage() {
               </p>
             </div>
             <div>
+              <p className="text-xs text-gray-500 mb-1">Chapter</p>
+              <p className="text-sm font-medium text-gray-900">
+                {question.chapter || 'N/A'}
+              </p>
+            </div>
+            <div>
               <p className="text-xs text-gray-500 mb-1">Topic</p>
               <p className="text-sm font-medium text-gray-900">
                 {question.topic}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Subtopic</p>
+              <p className="text-sm font-medium text-gray-900">
+                {question.subtopic || 'N/A'}
               </p>
             </div>
             <div>

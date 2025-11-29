@@ -1,0 +1,1831 @@
+{
+  "subjects": [
+    {
+      "id": "physics",
+      "name": "Physics",
+      "chapters": [
+        {
+          "id": "mechanics",
+          "name": "Mechanics",
+          "topics": [
+            {
+              "id": "kinematics",
+              "name": "Kinematics",
+              "subtopics": [
+                "1D Motion",
+                "2D Motion",
+                "Projectile Motion",
+                "Circular Motion",
+                "Relative Motion"
+              ]
+            },
+            {
+              "id": "dynamics",
+              "name": "Dynamics",
+              "subtopics": [
+                "Newton's Laws",
+                "Friction",
+                "Work and Energy",
+                "Power",
+                "Conservation Laws"
+              ]
+            },
+            {
+              "id": "rotational-motion",
+              "name": "Rotational Motion",
+              "subtopics": [
+                "Angular Velocity",
+                "Torque",
+                "Moment of Inertia",
+                "Angular Momentum",
+                "Rolling Motion"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "thermodynamics",
+          "name": "Thermodynamics",
+          "topics": [
+            {
+              "id": "heat-and-temperature",
+              "name": "Heat and Temperature",
+              "subtopics": [
+                "Thermal Expansion",
+                "Heat Transfer",
+                "Calorimetry",
+                "Thermal Equilibrium",
+                "Specific Heat"
+              ]
+            },
+            {
+              "id": "laws-of-thermodynamics",
+              "name": "Laws of Thermodynamics",
+              "subtopics": [
+                "First Law",
+                "Second Law",
+                "Entropy",
+                "Heat Engines",
+                "Refrigerators"
+              ]
+            },
+            {
+              "id": "kinetic-theory",
+              "name": "Kinetic Theory of Gases",
+              "subtopics": [
+                "Ideal Gas Law",
+                "Maxwell Distribution",
+                "Mean Free Path",
+                "Degrees of Freedom",
+                "Real Gases"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "waves-and-oscillations",
+          "name": "Waves and Oscillations",
+          "topics": [
+            {
+              "id": "simple-harmonic-motion",
+              "name": "Simple Harmonic Motion",
+              "subtopics": [
+                "SHM Equations",
+                "Spring-Mass System",
+                "Pendulum",
+                "Energy in SHM",
+                "Damped Oscillations"
+              ]
+            },
+            {
+              "id": "wave-motion",
+              "name": "Wave Motion",
+              "subtopics": [
+                "Wave Equation",
+                "Standing Waves",
+                "Doppler Effect",
+                "Interference",
+                "Beats"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "optics",
+          "name": "Optics",
+          "topics": [
+            {
+              "id": "geometric-optics",
+              "name": "Geometric Optics",
+              "subtopics": [
+                "Reflection",
+                "Refraction",
+                "Lenses",
+                "Mirrors",
+                "Optical Instruments"
+              ]
+            },
+            {
+              "id": "wave-optics",
+              "name": "Wave Optics",
+              "subtopics": [
+                "Interference",
+                "Diffraction",
+                "Polarization",
+                "Young's Experiment",
+                "Single Slit"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "electromagnetism",
+          "name": "Electromagnetism",
+          "topics": [
+            {
+              "id": "electrostatics",
+              "name": "Electrostatics",
+              "subtopics": [
+                "Coulomb's Law",
+                "Electric Field",
+                "Electric Potential",
+                "Capacitors",
+                "Gauss's Law"
+              ]
+            },
+            {
+              "id": "current-electricity",
+              "name": "Current Electricity",
+              "subtopics": [
+                "Ohm's Law",
+                "Resistance",
+                "Kirchhoff's Laws",
+                "RC Circuits",
+                "Power and Energy"
+              ]
+            },
+            {
+              "id": "magnetism",
+              "name": "Magnetism",
+              "subtopics": [
+                "Magnetic Field",
+                "Magnetic Force",
+                "Biot-Savart Law",
+                "Ampere's Law",
+                "Electromagnetic Induction"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modern-physics",
+          "name": "Modern Physics",
+          "topics": [
+            {
+              "id": "quantum-mechanics",
+              "name": "Quantum Mechanics",
+              "subtopics": [
+                "Photoelectric Effect",
+                "De Broglie Wavelength",
+                "Heisenberg Uncertainty",
+                "Quantum Numbers",
+                "Wave Function"
+              ]
+            },
+            {
+              "id": "atomic-structure",
+              "name": "Atomic Structure",
+              "subtopics": [
+                "Bohr Model",
+                "Energy Levels",
+                "Spectra",
+                "X-rays",
+                "Atomic Transitions"
+              ]
+            },
+            {
+              "id": "nuclear-physics",
+              "name": "Nuclear Physics",
+              "subtopics": [
+                "Nuclear Reactions",
+                "Radioactivity",
+                "Binding Energy",
+                "Fission and Fusion",
+                "Half-Life"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fluid-mechanics",
+          "name": "Fluid Mechanics",
+          "topics": [
+            {
+              "id": "fluid-statics",
+              "name": "Fluid Statics",
+              "subtopics": [
+                "Pressure",
+                "Buoyancy",
+                "Archimedes' Principle",
+                "Surface Tension",
+                "Capillarity"
+              ]
+            },
+            {
+              "id": "fluid-dynamics",
+              "name": "Fluid Dynamics",
+              "subtopics": [
+                "Bernoulli's Principle",
+                "Continuity Equation",
+                "Viscosity",
+                "Reynolds Number",
+                "Poiseuille's Law"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "electromagnetic-waves",
+          "name": "Electromagnetic Waves",
+          "topics": [
+            {
+              "id": "em-spectrum",
+              "name": "EM Spectrum",
+              "subtopics": [
+                "Radio Waves",
+                "Microwaves",
+                "Infrared",
+                "Visible Light",
+                "UV, X-rays, Gamma"
+              ]
+            },
+            {
+              "id": "em-wave-equations",
+              "name": "EM Wave Equations",
+              "subtopics": [
+                "Maxwell's Equations",
+                "Wave Propagation",
+                "Poynting Vector",
+                "EM Energy",
+                "Radiation Pressure"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "semiconductors",
+          "name": "Semiconductors",
+          "topics": [
+            {
+              "id": "semiconductor-basics",
+              "name": "Semiconductor Basics",
+              "subtopics": [
+                "Intrinsic Semiconductors",
+                "Extrinsic Semiconductors",
+                "PN Junction",
+                "Diode",
+                "Transistor"
+              ]
+            },
+            {
+              "id": "electronic-devices",
+              "name": "Electronic Devices",
+              "subtopics": [
+                "LED",
+                "Solar Cell",
+                "Zener Diode",
+                "Rectifiers",
+                "Amplifiers"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "communication-systems",
+          "name": "Communication Systems",
+          "topics": [
+            {
+              "id": "modulation",
+              "name": "Modulation",
+              "subtopics": [
+                "AM",
+                "FM",
+                "Digital Modulation",
+                "Bandwidth",
+                "Noise"
+              ]
+            },
+            {
+              "id": "transmission",
+              "name": "Transmission",
+              "subtopics": [
+                "Antennas",
+                "Propagation",
+                "Satellite Communication",
+                "Optical Fiber",
+                "Mobile Communication"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "inorganic-chemistry",
+      "name": "Inorganic Chemistry",
+      "chapters": [
+        {
+          "id": "periodic-table",
+          "name": "Periodic Table",
+          "topics": [
+            {
+              "id": "periodic-trends",
+              "name": "Periodic Trends",
+              "subtopics": [
+                "Atomic Radius",
+                "Ionization Energy",
+                "Electron Affinity",
+                "Electronegativity",
+                "Metallic Character"
+              ]
+            },
+            {
+              "id": "block-elements",
+              "name": "Block Elements",
+              "subtopics": [
+                "s-Block",
+                "p-Block",
+                "d-Block",
+                "f-Block",
+                "Transition Elements"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "chemical-bonding",
+          "name": "Chemical Bonding",
+          "topics": [
+            {
+              "id": "ionic-bonding",
+              "name": "Ionic Bonding",
+              "subtopics": [
+                "Ionic Compounds",
+                "Lattice Energy",
+                "Born-Haber Cycle",
+                "Solubility",
+                "Properties"
+              ]
+            },
+            {
+              "id": "covalent-bonding",
+              "name": "Covalent Bonding",
+              "subtopics": [
+                "Lewis Structures",
+                "VSEPR Theory",
+                "Hybridization",
+                "Molecular Geometry",
+                "Bond Parameters"
+              ]
+            },
+            {
+              "id": "metallic-bonding",
+              "name": "Metallic Bonding",
+              "subtopics": [
+                "Metallic Properties",
+                "Alloys",
+                "Conductivity",
+                "Crystal Structure",
+                "Band Theory"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "coordination-compounds",
+          "name": "Coordination Compounds",
+          "topics": [
+            {
+              "id": "coordination-basics",
+              "name": "Coordination Basics",
+              "subtopics": [
+                "Ligands",
+                "Coordination Number",
+                "Nomenclature",
+                "Isomerism",
+                "Werner's Theory"
+              ]
+            },
+            {
+              "id": "bonding-theories",
+              "name": "Bonding Theories",
+              "subtopics": [
+                "Valence Bond Theory",
+                "Crystal Field Theory",
+                "Ligand Field Theory",
+                "Magnetic Properties",
+                "Color"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hydrogen",
+          "name": "Hydrogen",
+          "topics": [
+            {
+              "id": "hydrogen-compounds",
+              "name": "Hydrogen Compounds",
+              "subtopics": [
+                "Water",
+                "Hydrogen Peroxide",
+                "Hydrides",
+                "Heavy Water",
+                "Hydrogen Bonding"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "s-block-elements",
+          "name": "s-Block Elements",
+          "topics": [
+            {
+              "id": "alkali-metals",
+              "name": "Alkali Metals",
+              "subtopics": [
+                "Group 1 Elements",
+                "Oxides and Hydroxides",
+                "Halides",
+                "Anomalous Properties",
+                "Biological Importance"
+              ]
+            },
+            {
+              "id": "alkaline-earth-metals",
+              "name": "Alkaline Earth Metals",
+              "subtopics": [
+                "Group 2 Elements",
+                "Compounds",
+                "Hardness of Water",
+                "Anomalous Behavior",
+                "Uses"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p-block-elements",
+          "name": "p-Block Elements",
+          "topics": [
+            {
+              "id": "group-13",
+              "name": "Group 13 Elements",
+              "subtopics": [
+                "Boron Family",
+                "Aluminum",
+                "Boron Compounds",
+                "Oxides",
+                "Applications"
+              ]
+            },
+            {
+              "id": "group-14",
+              "name": "Group 14 Elements",
+              "subtopics": [
+                "Carbon Family",
+                "Silicon",
+                "Carbon Allotropes",
+                "Oxides",
+                "Silicates"
+              ]
+            },
+            {
+              "id": "group-15",
+              "name": "Group 15 Elements",
+              "subtopics": [
+                "Nitrogen Family",
+                "Ammonia",
+                "Nitric Acid",
+                "Phosphorus",
+                "Oxides"
+              ]
+            },
+            {
+              "id": "group-16",
+              "name": "Group 16 Elements",
+              "subtopics": [
+                "Oxygen Family",
+                "Ozone",
+                "Sulfur",
+                "Oxides",
+                "Acids"
+              ]
+            },
+            {
+              "id": "group-17",
+              "name": "Group 17 Elements",
+              "subtopics": [
+                "Halogens",
+                "Chlorine",
+                "Interhalogen Compounds",
+                "Oxoacids",
+                "Uses"
+              ]
+            },
+            {
+              "id": "group-18",
+              "name": "Group 18 Elements",
+              "subtopics": [
+                "Noble Gases",
+                "Compounds",
+                "Uses",
+                "Isolation",
+                "Properties"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "d-and-f-block",
+          "name": "d and f-Block Elements",
+          "topics": [
+            {
+              "id": "transition-elements",
+              "name": "Transition Elements",
+              "subtopics": [
+                "General Properties",
+                "Oxidation States",
+                "Magnetic Properties",
+                "Colored Ions",
+                "Catalytic Properties"
+              ]
+            },
+            {
+              "id": "lanthanides",
+              "name": "Lanthanides",
+              "subtopics": [
+                "Lanthanide Contraction",
+                "Properties",
+                "Separation",
+                "Uses",
+                "Electronic Configuration"
+              ]
+            },
+            {
+              "id": "actinides",
+              "name": "Actinides",
+              "subtopics": [
+                "Actinide Contraction",
+                "Properties",
+                "Nuclear Properties",
+                "Uses",
+                "Electronic Configuration"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "environmental-chemistry",
+          "name": "Environmental Chemistry",
+          "topics": [
+            {
+              "id": "pollution",
+              "name": "Pollution",
+              "subtopics": [
+                "Air Pollution",
+                "Water Pollution",
+                "Soil Pollution",
+                "Greenhouse Effect",
+                "Ozone Depletion"
+              ]
+            },
+            {
+              "id": "green-chemistry",
+              "name": "Green Chemistry",
+              "subtopics": [
+                "Principles",
+                "Sustainable Development",
+                "Waste Management",
+                "Renewable Resources",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "metallurgy",
+          "name": "Metallurgy",
+          "topics": [
+            {
+              "id": "extraction",
+              "name": "Extraction of Metals",
+              "subtopics": [
+                "Ore Concentration",
+                "Roasting and Calcination",
+                "Reduction",
+                "Refining",
+                "Electrolytic Methods"
+              ]
+            },
+            {
+              "id": "iron-and-steel",
+              "name": "Iron and Steel",
+              "subtopics": [
+                "Blast Furnace",
+                "Steel Making",
+                "Alloys",
+                "Heat Treatment",
+                "Properties"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "qualitative-analysis",
+          "name": "Qualitative Analysis",
+          "topics": [
+            {
+              "id": "cation-analysis",
+              "name": "Cation Analysis",
+              "subtopics": [
+                "Group I Cations",
+                "Group II Cations",
+                "Group III Cations",
+                "Group IV Cations",
+                "Group V Cations"
+              ]
+            },
+            {
+              "id": "anion-analysis",
+              "name": "Anion Analysis",
+              "subtopics": [
+                "Group I Anions",
+                "Group II Anions",
+                "Group III Anions",
+                "Confirmatory Tests",
+                "Interfering Ions"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "organic-chemistry",
+      "name": "Organic Chemistry",
+      "chapters": [
+        {
+          "id": "basic-principles",
+          "name": "Basic Principles",
+          "topics": [
+            {
+              "id": "iupac-nomenclature",
+              "name": "IUPAC Nomenclature",
+              "subtopics": [
+                "Alkanes",
+                "Alkenes",
+                "Alkynes",
+                "Aromatic Compounds",
+                "Functional Groups"
+              ]
+            },
+            {
+              "id": "isomerism",
+              "name": "Isomerism",
+              "subtopics": [
+                "Structural Isomerism",
+                "Stereoisomerism",
+                "Geometric Isomerism",
+                "Optical Isomerism",
+                "Conformational Isomerism"
+              ]
+            },
+            {
+              "id": "reaction-mechanisms",
+              "name": "Reaction Mechanisms",
+              "subtopics": [
+                "Substitution",
+                "Elimination",
+                "Addition",
+                "Rearrangement",
+                "Free Radical"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hydrocarbons",
+          "name": "Hydrocarbons",
+          "topics": [
+            {
+              "id": "alkanes",
+              "name": "Alkanes",
+              "subtopics": [
+                "Preparation",
+                "Properties",
+                "Halogenation",
+                "Combustion",
+                "Cracking"
+              ]
+            },
+            {
+              "id": "alkenes",
+              "name": "Alkenes",
+              "subtopics": [
+                "Preparation",
+                "Properties",
+                "Addition Reactions",
+                "Markovnikov's Rule",
+                "Polymerization"
+              ]
+            },
+            {
+              "id": "alkynes",
+              "name": "Alkynes",
+              "subtopics": [
+                "Preparation",
+                "Properties",
+                "Acidic Character",
+                "Addition Reactions",
+                "Uses"
+              ]
+            },
+            {
+              "id": "aromatic-compounds",
+              "name": "Aromatic Compounds",
+              "subtopics": [
+                "Benzene Structure",
+                "Aromaticity",
+                "Electrophilic Substitution",
+                "Directing Effects",
+                "Polynuclear Aromatics"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "functional-groups",
+          "name": "Functional Groups",
+          "topics": [
+            {
+              "id": "alcohols",
+              "name": "Alcohols",
+              "subtopics": [
+                "Preparation",
+                "Properties",
+                "Oxidation",
+                "Esterification",
+                "Ethers"
+              ]
+            },
+            {
+              "id": "aldehydes-ketones",
+              "name": "Aldehydes and Ketones",
+              "subtopics": [
+                "Preparation",
+                "Properties",
+                "Nucleophilic Addition",
+                "Aldol Condensation",
+                "Cannizzaro Reaction"
+              ]
+            },
+            {
+              "id": "carboxylic-acids",
+              "name": "Carboxylic Acids",
+              "subtopics": [
+                "Preparation",
+                "Properties",
+                "Acidity",
+                "Derivatives",
+                "Esters"
+              ]
+            },
+            {
+              "id": "amines",
+              "name": "Amines",
+              "subtopics": [
+                "Preparation",
+                "Properties",
+                "Basicity",
+                "Diazotization",
+                "Azo Compounds"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "biomolecules",
+          "name": "Biomolecules",
+          "topics": [
+            {
+              "id": "carbohydrates",
+              "name": "Carbohydrates",
+              "subtopics": [
+                "Monosaccharides",
+                "Disaccharides",
+                "Polysaccharides",
+                "Glycosidic Linkage",
+                "Biological Functions"
+              ]
+            },
+            {
+              "id": "proteins",
+              "name": "Proteins",
+              "subtopics": [
+                "Amino Acids",
+                "Peptide Bond",
+                "Primary Structure",
+                "Secondary Structure",
+                "Enzymes"
+              ]
+            },
+            {
+              "id": "nucleic-acids",
+              "name": "Nucleic Acids",
+              "subtopics": [
+                "DNA",
+                "RNA",
+                "Nucleotides",
+                "Base Pairing",
+                "Genetic Code"
+              ]
+            },
+            {
+              "id": "lipids",
+              "name": "Lipids",
+              "subtopics": [
+                "Fats and Oils",
+                "Phospholipids",
+                "Steroids",
+                "Waxes",
+                "Biological Functions"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "polymers",
+          "name": "Polymers",
+          "topics": [
+            {
+              "id": "classification",
+              "name": "Classification",
+              "subtopics": [
+                "Natural Polymers",
+                "Synthetic Polymers",
+                "Addition Polymers",
+                "Condensation Polymers",
+                "Copolymers"
+              ]
+            },
+            {
+              "id": "important-polymers",
+              "name": "Important Polymers",
+              "subtopics": [
+                "Polyethylene",
+                "PVC",
+                "Nylon",
+                "Polyester",
+                "Rubber"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "chemistry-in-everyday-life",
+          "name": "Chemistry in Everyday Life",
+          "topics": [
+            {
+              "id": "drugs",
+              "name": "Drugs",
+              "subtopics": [
+                "Antibiotics",
+                "Antacids",
+                "Analgesics",
+                "Antiseptics",
+                "Drug Design"
+              ]
+            },
+            {
+              "id": "food-additives",
+              "name": "Food Additives",
+              "subtopics": [
+                "Preservatives",
+                "Sweeteners",
+                "Flavor Enhancers",
+                "Antioxidants",
+                "Coloring Agents"
+              ]
+            },
+            {
+              "id": "cleansing-agents",
+              "name": "Cleansing Agents",
+              "subtopics": [
+                "Soaps",
+                "Detergents",
+                "Surfactants",
+                "Emulsifiers",
+                "Bleaching Agents"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "stereochemistry",
+          "name": "Stereochemistry",
+          "topics": [
+            {
+              "id": "chirality",
+              "name": "Chirality",
+              "subtopics": [
+                "Chiral Centers",
+                "Enantiomers",
+                "Diastereomers",
+                "Meso Compounds",
+                "Optical Activity"
+              ]
+            },
+            {
+              "id": "r-s-notation",
+              "name": "R-S Notation",
+              "subtopics": [
+                "Cahn-Ingold-Prelog Rules",
+                "Priority Rules",
+                "Configuration",
+                "Fischer Projection",
+                "Newman Projection"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "organic-reactions",
+          "name": "Organic Reactions",
+          "topics": [
+            {
+              "id": "substitution-reactions",
+              "name": "Substitution Reactions",
+              "subtopics": [
+                "SN1 Mechanism",
+                "SN2 Mechanism",
+                "Nucleophilic Substitution",
+                "Electrophilic Substitution",
+                "Factors Affecting"
+              ]
+            },
+            {
+              "id": "elimination-reactions",
+              "name": "Elimination Reactions",
+              "subtopics": [
+                "E1 Mechanism",
+                "E2 Mechanism",
+                "Saytzeff Rule",
+                "Hofmann Elimination",
+                "Competition with Substitution"
+              ]
+            },
+            {
+              "id": "addition-reactions",
+              "name": "Addition Reactions",
+              "subtopics": [
+                "Electrophilic Addition",
+                "Nucleophilic Addition",
+                "Markovnikov Addition",
+                "Anti-Markovnikov",
+                "Stereochemistry"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "spectroscopy",
+          "name": "Spectroscopy",
+          "topics": [
+            {
+              "id": "ir-spectroscopy",
+              "name": "IR Spectroscopy",
+              "subtopics": [
+                "Functional Group Identification",
+                "Fingerprint Region",
+                "Characteristic Frequencies",
+                "Sample Preparation",
+                "Applications"
+              ]
+            },
+            {
+              "id": "nmr-spectroscopy",
+              "name": "NMR Spectroscopy",
+              "subtopics": [
+                "1H NMR",
+                "13C NMR",
+                "Chemical Shift",
+                "Coupling Constants",
+                "Structure Determination"
+              ]
+            },
+            {
+              "id": "mass-spectrometry",
+              "name": "Mass Spectrometry",
+              "subtopics": [
+                "Molecular Ion",
+                "Fragmentation",
+                "Base Peak",
+                "Isotope Peaks",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "heterocyclic-compounds",
+          "name": "Heterocyclic Compounds",
+          "topics": [
+            {
+              "id": "five-membered",
+              "name": "Five-Membered Rings",
+              "subtopics": [
+                "Furan",
+                "Pyrrole",
+                "Thiophene",
+                "Imidazole",
+                "Properties"
+              ]
+            },
+            {
+              "id": "six-membered",
+              "name": "Six-Membered Rings",
+              "subtopics": [
+                "Pyridine",
+                "Pyrimidine",
+                "Purine",
+                "Properties",
+                "Reactivity"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "physical-chemistry",
+      "name": "Physical Chemistry",
+      "chapters": [
+        {
+          "id": "thermodynamics",
+          "name": "Thermodynamics",
+          "topics": [
+            {
+              "id": "first-law",
+              "name": "First Law of Thermodynamics",
+              "subtopics": [
+                "Internal Energy",
+                "Enthalpy",
+                "Heat Capacity",
+                "Work",
+                "Joule-Thomson Effect"
+              ]
+            },
+            {
+              "id": "second-law",
+              "name": "Second Law of Thermodynamics",
+              "subtopics": [
+                "Entropy",
+                "Gibbs Free Energy",
+                "Helmholtz Free Energy",
+                "Spontaneity",
+                "Carnot Cycle"
+              ]
+            },
+            {
+              "id": "thermochemistry",
+              "name": "Thermochemistry",
+              "subtopics": [
+                "Enthalpy Changes",
+                "Hess's Law",
+                "Bond Enthalpy",
+                "Calorimetry",
+                "Standard States"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "chemical-kinetics",
+          "name": "Chemical Kinetics",
+          "topics": [
+            {
+              "id": "reaction-rates",
+              "name": "Reaction Rates",
+              "subtopics": [
+                "Rate Law",
+                "Order of Reaction",
+                "Molecularity",
+                "Rate Constants",
+                "Half-Life"
+              ]
+            },
+            {
+              "id": "reaction-mechanisms",
+              "name": "Reaction Mechanisms",
+              "subtopics": [
+                "Elementary Reactions",
+                "Rate Determining Step",
+                "Steady State Approximation",
+                "Chain Reactions",
+                "Catalysis"
+              ]
+            },
+            {
+              "id": "temperature-dependence",
+              "name": "Temperature Dependence",
+              "subtopics": [
+                "Arrhenius Equation",
+                "Activation Energy",
+                "Collision Theory",
+                "Transition State Theory",
+                "Catalysts"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "equilibrium",
+          "name": "Equilibrium",
+          "topics": [
+            {
+              "id": "chemical-equilibrium",
+              "name": "Chemical Equilibrium",
+              "subtopics": [
+                "Equilibrium Constant",
+                "Le Chatelier's Principle",
+                "Reaction Quotient",
+                "Heterogeneous Equilibrium",
+                "Applications"
+              ]
+            },
+            {
+              "id": "ionic-equilibrium",
+              "name": "Ionic Equilibrium",
+              "subtopics": [
+                "Acids and Bases",
+                "pH and pOH",
+                "Buffer Solutions",
+                "Salt Hydrolysis",
+                "Solubility Product"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "solutions",
+          "name": "Solutions",
+          "topics": [
+            {
+              "id": "colligative-properties",
+              "name": "Colligative Properties",
+              "subtopics": [
+                "Vapor Pressure Lowering",
+                "Boiling Point Elevation",
+                "Freezing Point Depression",
+                "Osmotic Pressure",
+                "Van't Hoff Factor"
+              ]
+            },
+            {
+              "id": "ideal-solutions",
+              "name": "Ideal Solutions",
+              "subtopics": [
+                "Raoult's Law",
+                "Non-Ideal Solutions",
+                "Azeotropes",
+                "Distillation",
+                "Henry's Law"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "electrochemistry",
+          "name": "Electrochemistry",
+          "topics": [
+            {
+              "id": "electrochemical-cells",
+              "name": "Electrochemical Cells",
+              "subtopics": [
+                "Galvanic Cells",
+                "Electrolytic Cells",
+                "Cell Potential",
+                "Nernst Equation",
+                "Standard Electrode Potential"
+              ]
+            },
+            {
+              "id": "batteries",
+              "name": "Batteries",
+              "subtopics": [
+                "Primary Batteries",
+                "Secondary Batteries",
+                "Fuel Cells",
+                "Corrosion",
+                "Electroplating"
+              ]
+            },
+            {
+              "id": "conductance",
+              "name": "Conductance",
+              "subtopics": [
+                "Electrical Conductivity",
+                "Molar Conductivity",
+                "Kohlrausch's Law",
+                "Ionic Mobility",
+                "Transport Number"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "surface-chemistry",
+          "name": "Surface Chemistry",
+          "topics": [
+            {
+              "id": "adsorption",
+              "name": "Adsorption",
+              "subtopics": [
+                "Physisorption",
+                "Chemisorption",
+                "Adsorption Isotherms",
+                "Factors Affecting",
+                "Applications"
+              ]
+            },
+            {
+              "id": "catalysis",
+              "name": "Catalysis",
+              "subtopics": [
+                "Homogeneous Catalysis",
+                "Heterogeneous Catalysis",
+                "Enzyme Catalysis",
+                "Catalyst Types",
+                "Mechanism"
+              ]
+            },
+            {
+              "id": "colloids",
+              "name": "Colloids",
+              "subtopics": [
+                "Types of Colloids",
+                "Properties",
+                "Tyndall Effect",
+                "Brownian Motion",
+                "Emulsions"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "solid-state",
+          "name": "Solid State",
+          "topics": [
+            {
+              "id": "crystal-structure",
+              "name": "Crystal Structure",
+              "subtopics": [
+                "Unit Cell",
+                "Crystal Systems",
+                "Bragg's Law",
+                "X-ray Diffraction",
+                "Packing Efficiency"
+              ]
+            },
+            {
+              "id": "defects",
+              "name": "Defects",
+              "subtopics": [
+                "Point Defects",
+                "Line Defects",
+                "Schottky Defect",
+                "Frenkel Defect",
+                "Impurity Defects"
+              ]
+            },
+            {
+              "id": "electrical-properties",
+              "name": "Electrical Properties",
+              "subtopics": [
+                "Conductors",
+                "Semiconductors",
+                "Insulators",
+                "Band Theory",
+                "Doping"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "atomic-structure",
+          "name": "Atomic Structure",
+          "topics": [
+            {
+              "id": "quantum-mechanics",
+              "name": "Quantum Mechanics",
+              "subtopics": [
+                "Bohr Model",
+                "Quantum Numbers",
+                "Orbitals",
+                "Electronic Configuration",
+                "Aufbau Principle"
+              ]
+            },
+            {
+              "id": "periodic-properties",
+              "name": "Periodic Properties",
+              "subtopics": [
+                "Atomic Size",
+                "Ionization Energy",
+                "Electron Affinity",
+                "Electronegativity",
+                "Trends"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "molecular-structure",
+          "name": "Molecular Structure",
+          "topics": [
+            {
+              "id": "bonding",
+              "name": "Bonding",
+              "subtopics": [
+                "Valence Bond Theory",
+                "Molecular Orbital Theory",
+                "Hybridization",
+                "VSEPR Theory",
+                "Bond Parameters"
+              ]
+            },
+            {
+              "id": "intermolecular-forces",
+              "name": "Intermolecular Forces",
+              "subtopics": [
+                "Van der Waals Forces",
+                "Hydrogen Bonding",
+                "Dipole-Dipole",
+                "London Forces",
+                "Effects"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "gaseous-state",
+          "name": "Gaseous State",
+          "topics": [
+            {
+              "id": "gas-laws",
+              "name": "Gas Laws",
+              "subtopics": [
+                "Ideal Gas Law",
+                "Boyle's Law",
+                "Charles's Law",
+                "Avogadro's Law",
+                "Combined Gas Law"
+              ]
+            },
+            {
+              "id": "kinetic-theory",
+              "name": "Kinetic Theory",
+              "subtopics": [
+                "Maxwell Distribution",
+                "Root Mean Square Speed",
+                "Mean Free Path",
+                "Collision Frequency",
+                "Real Gases"
+              ]
+            },
+            {
+              "id": "van-der-waals",
+              "name": "Van der Waals Equation",
+              "subtopics": [
+                "Corrections",
+                "Critical Constants",
+                "Liquefaction",
+                "Joule-Thomson Effect",
+                "Applications"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mathematics",
+      "name": "Mathematics",
+      "chapters": [
+        {
+          "id": "algebra",
+          "name": "Algebra",
+          "topics": [
+            {
+              "id": "complex-numbers",
+              "name": "Complex Numbers",
+              "subtopics": [
+                "Basic Operations",
+                "Argand Plane",
+                "De Moivre's Theorem",
+                "Roots of Unity",
+                "Euler's Formula"
+              ]
+            },
+            {
+              "id": "quadratic-equations",
+              "name": "Quadratic Equations",
+              "subtopics": [
+                "Nature of Roots",
+                "Sum and Product",
+                "Transformation",
+                "Maximum/Minimum",
+                "Applications"
+              ]
+            },
+            {
+              "id": "sequences-series",
+              "name": "Sequences and Series",
+              "subtopics": [
+                "Arithmetic Progression",
+                "Geometric Progression",
+                "Harmonic Progression",
+                "Sum of Series",
+                "Special Series"
+              ]
+            },
+            {
+              "id": "permutations-combinations",
+              "name": "Permutations and Combinations",
+              "subtopics": [
+                "Fundamental Principle",
+                "Permutations",
+                "Combinations",
+                "Circular Permutations",
+                "Applications"
+              ]
+            },
+            {
+              "id": "binomial-theorem",
+              "name": "Binomial Theorem",
+              "subtopics": [
+                "Expansion",
+                "General Term",
+                "Middle Terms",
+                "Greatest Term",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "trigonometry",
+          "name": "Trigonometry",
+          "topics": [
+            {
+              "id": "trigonometric-functions",
+              "name": "Trigonometric Functions",
+              "subtopics": [
+                "Basic Identities",
+                "Compound Angles",
+                "Multiple Angles",
+                "Submultiple Angles",
+                "Transformations"
+              ]
+            },
+            {
+              "id": "trigonometric-equations",
+              "name": "Trigonometric Equations",
+              "subtopics": [
+                "General Solutions",
+                "Principal Solutions",
+                "Solving Techniques",
+                "Inverse Functions",
+                "Applications"
+              ]
+            },
+            {
+              "id": "properties-of-triangles",
+              "name": "Properties of Triangles",
+              "subtopics": [
+                "Sine Rule",
+                "Cosine Rule",
+                "Area Formulas",
+                "Circumradius",
+                "Inradius"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "coordinate-geometry",
+          "name": "Coordinate Geometry",
+          "topics": [
+            {
+              "id": "straight-lines",
+              "name": "Straight Lines",
+              "subtopics": [
+                "Slope",
+                "Equations",
+                "Angle between Lines",
+                "Distance Formula",
+                "Concurrency"
+              ]
+            },
+            {
+              "id": "circles",
+              "name": "Circles",
+              "subtopics": [
+                "Standard Equation",
+                "General Equation",
+                "Tangent",
+                "Chord Properties",
+                "Power of Point"
+              ]
+            },
+            {
+              "id": "conic-sections",
+              "name": "Conic Sections",
+              "subtopics": [
+                "Parabola",
+                "Ellipse",
+                "Hyperbola",
+                "Standard Forms",
+                "Properties"
+              ]
+            },
+            {
+              "id": "3d-geometry",
+              "name": "3D Geometry",
+              "subtopics": [
+                "Direction Cosines",
+                "Planes",
+                "Lines in Space",
+                "Distance",
+                "Angle between Planes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "calculus",
+          "name": "Calculus",
+          "topics": [
+            {
+              "id": "limits",
+              "name": "Limits",
+              "subtopics": [
+                "Concept of Limit",
+                "L'Hospital's Rule",
+                "Continuity",
+                "Types of Discontinuity",
+                "Sandwich Theorem"
+              ]
+            },
+            {
+              "id": "differentiation",
+              "name": "Differentiation",
+              "subtopics": [
+                "Derivatives",
+                "Chain Rule",
+                "Product Rule",
+                "Quotient Rule",
+                "Implicit Differentiation"
+              ]
+            },
+            {
+              "id": "applications-derivatives",
+              "name": "Applications of Derivatives",
+              "subtopics": [
+                "Tangent and Normal",
+                "Maxima and Minima",
+                "Rolle's Theorem",
+                "Mean Value Theorem",
+                "Curve Sketching"
+              ]
+            },
+            {
+              "id": "integration",
+              "name": "Integration",
+              "subtopics": [
+                "Indefinite Integration",
+                "Methods of Integration",
+                "Integration by Parts",
+                "Partial Fractions",
+                "Substitution"
+              ]
+            },
+            {
+              "id": "definite-integration",
+              "name": "Definite Integration",
+              "subtopics": [
+                "Fundamental Theorem",
+                "Properties",
+                "Leibniz Rule",
+                "Area under Curve",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "vectors",
+          "name": "Vectors",
+          "topics": [
+            {
+              "id": "vector-algebra",
+              "name": "Vector Algebra",
+              "subtopics": [
+                "Basic Operations",
+                "Dot Product",
+                "Cross Product",
+                "Scalar Triple Product",
+                "Vector Triple Product"
+              ]
+            },
+            {
+              "id": "vector-equations",
+              "name": "Vector Equations",
+              "subtopics": [
+                "Line in Space",
+                "Plane",
+                "Distance",
+                "Angle",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "probability",
+          "name": "Probability",
+          "topics": [
+            {
+              "id": "basic-probability",
+              "name": "Basic Probability",
+              "subtopics": [
+                "Sample Space",
+                "Events",
+                "Conditional Probability",
+                "Bayes' Theorem",
+                "Independent Events"
+              ]
+            },
+            {
+              "id": "random-variables",
+              "name": "Random Variables",
+              "subtopics": [
+                "Discrete Random Variables",
+                "Continuous Random Variables",
+                "Probability Distribution",
+                "Mean and Variance",
+                "Binomial Distribution"
+              ]
+            },
+            {
+              "id": "probability-distributions",
+              "name": "Probability Distributions",
+              "subtopics": [
+                "Normal Distribution",
+                "Poisson Distribution",
+                "Geometric Distribution",
+                "Expectation",
+                "Variance"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "statistics",
+          "name": "Statistics",
+          "topics": [
+            {
+              "id": "descriptive-statistics",
+              "name": "Descriptive Statistics",
+              "subtopics": [
+                "Mean, Median, Mode",
+                "Variance",
+                "Standard Deviation",
+                "Skewness",
+                "Kurtosis"
+              ]
+            },
+            {
+              "id": "correlation-regression",
+              "name": "Correlation and Regression",
+              "subtopics": [
+                "Correlation Coefficient",
+                "Regression Lines",
+                "Least Squares",
+                "Coefficient of Determination",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "matrices-determinants",
+          "name": "Matrices and Determinants",
+          "topics": [
+            {
+              "id": "matrix-operations",
+              "name": "Matrix Operations",
+              "subtopics": [
+                "Addition and Subtraction",
+                "Multiplication",
+                "Transpose",
+                "Inverse",
+                "Rank"
+              ]
+            },
+            {
+              "id": "determinants",
+              "name": "Determinants",
+              "subtopics": [
+                "Properties",
+                "Expansion",
+                "Cramer's Rule",
+                "Adjoint",
+                "Applications"
+              ]
+            },
+            {
+              "id": "system-equations",
+              "name": "System of Equations",
+              "subtopics": [
+                "Linear Equations",
+                "Consistency",
+                "Homogeneous Systems",
+                "Matrix Method",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "differential-equations",
+          "name": "Differential Equations",
+          "topics": [
+            {
+              "id": "first-order",
+              "name": "First Order Differential Equations",
+              "subtopics": [
+                "Separable Equations",
+                "Homogeneous Equations",
+                "Linear Equations",
+                "Exact Equations",
+                "Applications"
+              ]
+            },
+            {
+              "id": "higher-order",
+              "name": "Higher Order Differential Equations",
+              "subtopics": [
+                "Linear with Constant Coefficients",
+                "Complementary Function",
+                "Particular Integral",
+                "Method of Variation",
+                "Applications"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mathematical-reasoning",
+          "name": "Mathematical Reasoning",
+          "topics": [
+            {
+              "id": "statements",
+              "name": "Statements",
+              "subtopics": [
+                "Logical Connectives",
+                "Truth Tables",
+                "Tautology",
+                "Contradiction",
+                "Contingency"
+              ]
+            },
+            {
+              "id": "validity",
+              "name": "Validity",
+              "subtopics": [
+                "Valid Arguments",
+                "Invalid Arguments",
+                "Rules of Inference",
+                "Logical Equivalence",
+                "Applications"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
