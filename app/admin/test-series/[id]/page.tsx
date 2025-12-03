@@ -10,6 +10,7 @@ import { getTestSeriesById } from "@/lib/db/testSeries";
 import { getTestById } from "@/lib/db/tests";
 import type { TestSeries } from "@/lib/types/testSeries";
 import type { Test } from "@/lib/types/test";
+import DescriptionRenderer from "@/components/DescriptionRenderer";
 
 export default function ViewTestSeriesPage() {
   const router = useRouter();
@@ -190,7 +191,7 @@ export default function ViewTestSeriesPage() {
           {testSeries.description && (
             <div>
               <p className="text-xs text-gray-500 mb-2">Description</p>
-              <p className="text-sm text-gray-900">{testSeries.description}</p>
+              <DescriptionRenderer description={testSeries.description} className="text-sm" />
             </div>
           )}
 

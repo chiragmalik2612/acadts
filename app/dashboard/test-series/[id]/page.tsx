@@ -12,6 +12,7 @@ import { enrollInTestSeries, isEnrolled } from "@/lib/db/students";
 import { getTestById } from "@/lib/db/tests";
 import type { TestSeries } from "@/lib/types/testSeries";
 import type { Test } from "@/lib/types/test";
+import DescriptionRenderer from "@/components/DescriptionRenderer";
 
 export default function TestSeriesDetailsPage() {
   const router = useRouter();
@@ -218,7 +219,7 @@ export default function TestSeriesDetailsPage() {
             {/* Description */}
             <div className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 mb-3">Description</h2>
-              <p className="text-gray-700 leading-relaxed text-lg">{testSeries.description}</p>
+              <DescriptionRenderer description={testSeries.description || ""} />
             </div>
 
             {/* Tests Included */}
