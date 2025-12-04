@@ -61,35 +61,35 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-gray-50 flex flex-col relative">
       {/* Fixed Navbar */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50">
-        <div className="h-full px-4 md:px-6 flex items-center">
+        <div className="h-full px-4 md:px-6 flex items-center justify-between">
           <h1 className="text-lg md:text-xl font-bold text-gray-900">TestPrep Pro</h1>
+          
+          {/* Mobile Hamburger Button - Right side, same level as logo */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+            aria-label="Toggle menu"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {sidebarOpen ? (
+                <path d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
       </nav>
 
       <div className="flex flex-1 pt-16">
-        {/* Mobile Hamburger Button */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="md:hidden fixed top-20 left-4 z-50 p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
-          aria-label="Toggle menu"
-        >
-          <svg
-            className="w-6 h-6 text-gray-700"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            {sidebarOpen ? (
-              <path d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
-
         {/* Overlay for mobile */}
         {sidebarOpen && (
           <div
