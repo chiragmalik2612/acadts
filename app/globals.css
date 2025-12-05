@@ -96,3 +96,45 @@
   background-color: #f4f4f4;
   font-weight: bold;
 }
+
+/* Question content specific styles */
+.question-content {
+  line-height: 1.6;
+}
+
+.question-content p {
+  margin-bottom: 0.75rem;
+}
+
+.question-content p:last-child {
+  margin-bottom: 0;
+}
+
+.question-content ul,
+.question-content ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.question-content li {
+  margin: 0.25rem 0;
+}
+
+.question-content h1,
+.question-content h2,
+.question-content h3,
+.question-content h4,
+.question-content h5,
+.question-content h6 {
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.question-content strong {
+  font-weight: 600;
+}
+
+.question-content em {
+  font-style: italic;
+}

@@ -119,13 +119,21 @@ export default function DashboardPage() {
       setEnrolledSeries(updated);
       // Remove from available list (whether free or paid)
       setAvailableSeries((prev) => prev.filter((s) => s.id !== testSeriesId));
+      // Show success message
+      const series = availableSeries.find((s) => s.id === testSeriesId);
+      const isFree = !series?.price || series.price === 0;
+      alert(
+        isFree
+          ? "Successfully enrolled in test series! You now have access to all tests."
+          : "Purchase successful! You now have access to all tests in this series."
+      );
     } catch (error) {
       console.error("[DashboardPage] Error enrolling:", error);
       alert("Failed to enroll. Please try again.");
     } finally {
       setEnrollingId(null);
     }
-  }, [user]);
+  }, [user, availableSeries]);
 
 
   // Wait for BOTH auth + role to load
