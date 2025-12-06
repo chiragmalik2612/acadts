@@ -280,6 +280,15 @@ export default function TestTakingPage() {
     }
   }, [questions, handleGoToQuestion]);
 
+  const handleGoToSubsection = useCallback((sectionId: string, subsectionId: string) => {
+    const firstQuestionInSubsection = questions.findIndex(
+      (q) => q.sectionId === sectionId && q.subsectionId === subsectionId
+    );
+    if (firstQuestionInSubsection >= 0) {
+      handleGoToQuestion(firstQuestionInSubsection);
+    }
+  }, [questions, handleGoToQuestion]);
+
   // Format time
   const formatTime = useCallback((seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -379,19 +388,19 @@ export default function TestTakingPage() {
   const currentAnswer = answers.get(currentQuestionIndex);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white overflow-x-hidden">
       {/* Top Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4">
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-20 w-full">
+        <div className="max-w-7xl mx-auto px-4 w-full">
           {/* First Row: Title and Timer/Actions */}
-          <div className="flex items-start justify-between py-2">
+          <div className="flex items-start justify-between py-3 gap-4">
             {/* Left: Test Title */}
-            <div>
-              <h1 className="text-base font-semibold text-gray-900">{test.title}</h1>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 truncate">{test.title}</h1>
             </div>
 
             {/* Right: Timer and Action Buttons */}
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col items-end gap-2 flex-shrink-0">
               {/* Timer */}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Remaining Time:</span>
@@ -408,41 +417,59 @@ export default function TestTakingPage() {
                 <button className="text-sm text-gray-700 hover:text-gray-900 px-3 py-1 hover:bg-gray-100 rounded transition-colors">
                   Question Paper
                 </button>
-                <button
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to end the test? Your progress will be saved.")) {
-                      router.push("/dashboard");
-                    }
-                  }}
-                  className="text-sm text-gray-700 hover:text-gray-900 px-3 py-1 hover:bg-gray-100 rounded transition-colors"
-                >
-                  End Test
-                </button>
               </div>
             </div>
           </div>
 
           {/* Second Row: Subject Tabs and Mobile Menu Button */}
-          <div className="flex items-center justify-between border-t border-gray-200">
-            {/* Subject Tabs */}
+          <div className="flex items-center justify-between border-t border-gray-200 gap-2">
+            {/* Subject and Subsection Tabs */}
             {test.sections && test.sections.length > 0 && (
-              <div className="flex items-center">
+              <div className="flex items-center overflow-x-auto flex-1 min-w-0">
                 {test.sections
                   .sort((a, b) => a.order - b.order)
                   .map((section) => {
                     const isCurrentSection = currentSectionInfo?.section.id === section.id;
+                    const sortedSubsections = [...section.subsections].sort((a, b) => a.order - b.order);
+                    
                     return (
-                      <button
-                        key={section.id}
-                        onClick={() => handleGoToSection(section.id)}
-                        className={`px-8 py-3 font-bold text-sm transition-all border-b-2 ${
-                          isCurrentSection
-                            ? "bg-blue-700 text-white border-blue-700"
-                            : "bg-white text-gray-700 hover:bg-gray-50 border-transparent"
-                        }`}
-                      >
-                        {section.name.toUpperCase()}
-                      </button>
+                      <div key={section.id} className="flex items-center">
+                        {/* Section Tab */}
+                        <button
+                          onClick={() => handleGoToSection(section.id)}
+                          className={`px-6 py-3 font-bold text-sm transition-all border-b-2 whitespace-nowrap ${
+                            isCurrentSection
+                              ? "bg-blue-700 text-white border-blue-700"
+                              : "bg-white text-gray-700 hover:bg-gray-50 border-transparent"
+                          }`}
+                        >
+                          {section.name.toUpperCase()}
+                        </button>
+                        
+                        {/* Subsection Tabs */}
+                        {sortedSubsections.length > 0 && (
+                          <div className="flex items-center border-l border-gray-300">
+                            {sortedSubsections.map((subsection) => {
+                              const isCurrentSubsection = currentSectionInfo?.subsection?.id === subsection.id;
+                              return (
+                                <button
+                                  key={subsection.id}
+                                  onClick={() => handleGoToSubsection(section.id, subsection.id)}
+                                  className={`px-4 py-3 font-medium text-xs transition-all border-b-2 whitespace-nowrap ${
+                                    isCurrentSubsection && isCurrentSection
+                                      ? "bg-blue-600 text-white border-blue-600"
+                                      : isCurrentSection
+                                      ? "bg-blue-50 text-gray-700 hover:bg-blue-100 border-transparent"
+                                      : "bg-white text-gray-600 hover:bg-gray-50 border-transparent"
+                                  }`}
+                                >
+                                  {subsection.name}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
               </div>
@@ -469,11 +496,11 @@ export default function TestTakingPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="max-w-7xl mx-auto px-4 py-4 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
           {/* Main Question Area (Left - 2/3 width) */}
-          <div className="lg:col-span-2">
-            <div className="bg-white p-4">
+          <div className="lg:col-span-2 min-w-0">
+            <div className="bg-white p-4 pb-24 w-full overflow-x-hidden">
               {/* Question Header */}
               <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900 mb-2">
@@ -491,16 +518,16 @@ export default function TestTakingPage() {
               </div>
 
               {/* Question Text */}
-              <div className="mb-4">
+              <div className="mb-4 w-full overflow-x-auto">
                 <div
-                  className="prose prose-sm max-w-none text-gray-900 question-content text-sm"
+                  className="prose prose-sm max-w-none text-gray-900 question-content text-sm break-words"
                   dangerouslySetInnerHTML={{ __html: currentQuestion.text }}
                 />
               </div>
 
               {/* Question Image */}
               {currentQuestion.imageUrl && (
-                <div className="mb-4">
+                <div className="mb-4 w-full overflow-x-auto">
                   <img
                     src={currentQuestion.imageUrl}
                     alt="Question"
@@ -545,7 +572,7 @@ export default function TestTakingPage() {
                             {optionLabel}.
                           </span>
                           <div
-                            className="prose prose-sm max-w-none text-gray-900 flex-1 question-content text-sm"
+                            className="prose prose-sm max-w-none text-gray-900 flex-1 question-content text-sm break-words min-w-0"
                             dangerouslySetInnerHTML={{ __html: option }}
                           />
                         </label>
@@ -572,109 +599,78 @@ export default function TestTakingPage() {
                 </div>
               )}
 
-              {/* Navigation Buttons */}
-              <div className="flex items-center gap-3 pt-4">
-                <button
-                  onClick={handleMarkForReviewAndNext}
-                  className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium transition-all"
-                >
-                  Mark for Review & Next
-                </button>
-                <button
-                  onClick={handleClearResponse}
-                  className="px-4 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-900 text-sm font-medium transition-all"
-                >
-                  Clear Response
-                </button>
-                <button
-                  onClick={handleSaveAndNext}
-                  className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-all"
-                >
-                  Save & Next
-                </button>
-              </div>
             </div>
           </div>
 
           {/* Sidebar - Question Status & Palette (Right - 1/3 width) */}
-          <div className="lg:col-span-1 hidden lg:block">
+          <div className="lg:col-span-1 hidden lg:block relative min-w-0">
             {/* Desktop Sidebar Content */}
-            <div className="bg-white p-3 sticky top-32">
-              {/* Status Legend */}
-              <div className="mb-3 pb-3 border-b border-gray-200">
-                <div className="space-y-1.5 text-[10px]">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-green-500"></div>
-                    <span className="text-gray-700">{statusCounts.answered} Answered</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-red-500"></div>
-                    <span className="text-gray-700">{statusCounts.not_answered} Not Answered</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-gray-300"></div>
-                    <span className="text-gray-700">{statusCounts.not_visited} Not Visited</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-purple-500"></div>
-                    <span className="text-gray-700">{statusCounts.marked_for_review} Marked for Review</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 rounded bg-purple-500 relative">
-                      <div className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-green-500"></div>
+            <div className="bg-white sticky top-32 flex flex-col w-full overflow-x-hidden" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
+              {/* Scrollable Content */}
+              <div className="p-3 overflow-y-auto flex-1 pb-20">
+                {/* Status Legend */}
+                <div className="mb-3 pb-3 border-b border-gray-200">
+                  <div className="space-y-1.5 text-[10px]">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-green-500"></div>
+                      <span className="text-gray-700">{statusCounts.answered} Answered</span>
                     </div>
-                    <span className="text-gray-700">{statusCounts.answered_and_marked} Answered & Marked for Review (will be considered for evaluation)</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-red-500"></div>
+                      <span className="text-gray-700">{statusCounts.not_answered} Not Answered</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-gray-300"></div>
+                      <span className="text-gray-700">{statusCounts.not_visited} Not Visited</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-purple-500"></div>
+                      <span className="text-gray-700">{statusCounts.marked_for_review} Marked for Review</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-purple-500 relative">
+                        <div className="absolute top-0.5 left-0.5 w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                      </div>
+                      <span className="text-gray-700">{statusCounts.answered_and_marked} Answered & Marked for Review (will be considered for evaluation)</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Question Palette */}
-              <div className="mb-3">
-                <h3 className="text-xs font-semibold text-gray-900 mb-2">Choose a Question</h3>
-                <div className="grid grid-cols-5 gap-1.5 max-h-96 overflow-y-auto">
-                  {questions.map((q, index) => {
-                    const status = getQuestionStatus(index);
-                    const isCurrent = index === currentQuestionIndex;
-                    
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => handleGoToQuestion(index)}
-                        className={`aspect-square text-xs font-medium transition-all relative flex items-center justify-center ${
-                          isCurrent
-                            ? "ring-2 ring-blue-500"
-                            : ""
-                        } ${getStatusColor(status)} ${
-                          status === "answered" || status === "answered_and_marked"
-                            ? "text-white"
-                            : "text-gray-700"
-                        }`}
-                        title={`Question ${index + 1}`}
-                      >
-                        {index + 1}
-                        {status === "answered_and_marked" && (
-                          <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-green-500"></div>
-                        )}
-                      </button>
-                    );
-                  })}
+                {/* Question Palette */}
+                <div className="mb-3">
+                  <h3 className="text-xs font-semibold text-gray-900 mb-2">Choose a Question</h3>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {questions.map((q, index) => {
+                      const status = getQuestionStatus(index);
+                      const isCurrent = index === currentQuestionIndex;
+                      
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => handleGoToQuestion(index)}
+                          className={`aspect-square text-xs font-medium transition-all relative flex items-center justify-center ${
+                            isCurrent
+                              ? "ring-2 ring-blue-500"
+                              : ""
+                          } ${getStatusColor(status)} ${
+                            status === "answered" || status === "answered_and_marked"
+                              ? "text-white"
+                              : "text-gray-700"
+                          }`}
+                          title={`Question ${index + 1}`}
+                        >
+                          {index + 1}
+                          {status === "answered_and_marked" && (
+                            <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-green-500"></div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="space-y-2 pt-3 border-t border-gray-200">
-                <button
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to submit the test? This action cannot be undone.")) {
-                      router.push("/dashboard");
-                    }
-                  }}
-                  className="w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-all"
-                >
-                  Submit
-                </button>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -689,8 +685,9 @@ export default function TestTakingPage() {
           ></div>
           
           {/* Sidebar Panel */}
-          <div className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 overflow-y-auto lg:hidden">
-            <div className="p-3">
+          <div className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 flex flex-col lg:hidden overflow-x-hidden">
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 pb-20">
               {/* Close Button */}
               <div className="flex justify-end mb-3 pb-3 border-b border-gray-200">
                 <button
@@ -735,7 +732,7 @@ export default function TestTakingPage() {
               {/* Question Palette */}
               <div className="mb-3">
                 <h3 className="text-xs font-semibold text-gray-900 mb-2">Choose a Question</h3>
-                <div className="grid grid-cols-5 gap-1.5 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-5 gap-1.5">
                   {questions.map((q, index) => {
                     const status = getQuestionStatus(index);
                     const isCurrent = index === currentQuestionIndex;
@@ -764,24 +761,54 @@ export default function TestTakingPage() {
                   })}
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="space-y-2 pt-3 border-t border-gray-200">
-                <button
-                  onClick={() => {
-                    if (window.confirm("Are you sure you want to submit the test? This action cannot be undone.")) {
-                      router.push("/dashboard");
-                    }
-                  }}
-                  className="w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-all"
-                >
-                  Submit
-                </button>
-              </div>
             </div>
+
           </div>
         </>
       )}
+
+      {/* Fixed Bottom Navigation Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-30 w-full overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-4 py-3 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+            {/* Left side - Navigation Buttons (2/3 width on desktop) */}
+            <div className="lg:col-span-2 flex items-center justify-center gap-3 flex-wrap min-w-0">
+              <button
+                onClick={handleMarkForReviewAndNext}
+                className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium transition-all"
+              >
+                Mark for Review & Next
+              </button>
+              <button
+                onClick={handleClearResponse}
+                className="px-4 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-900 text-sm font-medium transition-all"
+              >
+                Clear Response
+              </button>
+              <button
+                onClick={handleSaveAndNext}
+                className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-all"
+              >
+                Save & Next
+              </button>
+            </div>
+            
+            {/* Right side - Submit Button (1/3 width on desktop, full width on mobile) */}
+            <div className="lg:col-span-1 min-w-0">
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to submit the test? This action cannot be undone.")) {
+                    router.push("/dashboard");
+                  }
+                }}
+                className="w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-all"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
