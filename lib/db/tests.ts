@@ -34,9 +34,12 @@ function mapTestDoc(
   snapshot: QueryDocumentSnapshot | DocumentSnapshot
 ): Test {
   const data = snapshot.data() as TestDoc;
+  // Backward compatibility: if sections don't exist, create empty array
+  const sections = data.sections || [];
   return {
     id: snapshot.id,
     ...data,
+    sections,
   };
 }
 
@@ -94,6 +97,7 @@ export async function createTest(
     title: input.title.trim(),
     description: input.description.trim(),
     durationMinutes: input.durationMinutes,
+    sections: input.sections || [],
     questions: input.questions,
     createdBy: adminUid,
     createdAt: serverTimestamp(),

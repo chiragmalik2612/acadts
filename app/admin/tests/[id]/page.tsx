@@ -173,11 +173,70 @@ export default function ViewTestPage() {
             </div>
           )}
 
+          {/* Sections Overview */}
+          {test.sections && test.sections.length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Test Structure</p>
+              <div className="space-y-3">
+                {test.sections
+                  .sort((a, b) => a.order - b.order)
+                  .map((section) => {
+                    const sectionQuestions = test.questions.filter(
+                      (q) => q.sectionId === section.id
+                    );
+                    return (
+                      <div
+                        key={section.id}
+                        className="border border-gray-200 rounded-lg p-4 bg-blue-50"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-sm font-semibold text-gray-900">
+                            {section.name}
+                          </h3>
+                          <span className="text-xs text-gray-600">
+                            {sectionQuestions.length} question{sectionQuestions.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {section.subsections
+                            .sort((a, b) => a.order - b.order)
+                            .map((subsection) => {
+                              const subsectionQuestions = test.questions.filter(
+                                (q) =>
+                                  q.sectionId === section.id &&
+                                  q.subsectionId === subsection.id
+                              );
+                              return (
+                                <div
+                                  key={subsection.id}
+                                  className="bg-white border border-gray-200 rounded p-2"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-medium text-gray-700">
+                                      {subsection.name}
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                      {subsectionQuestions.length} question{subsectionQuestions.length !== 1 ? 's' : ''}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+
           {/* Questions List */}
           <div>
             <p className="text-xs text-gray-500 mb-2">Questions</p>
             <div className="space-y-3">
-              {test.questions.map((tq, index) => {
+              {test.questions
+                .sort((a, b) => a.order - b.order)
+                .map((tq, index) => {
                 const question = questions.get(tq.questionId);
                 const handleQuestionClick = () => {
                   if (question) {
@@ -226,7 +285,12 @@ export default function ViewTestPage() {
                     setError(errorMessage);
                   }
                 };
-                return (
+                    const section = test.sections?.find((s) => s.id === tq.sectionId);
+                    const subsection = section?.subsections.find(
+                      (sub) => sub.id === tq.subsectionId
+                    );
+
+                    return (
                   <div
                     key={tq.questionId}
                     onClick={handleQuestionClick}
@@ -240,6 +304,16 @@ export default function ViewTestPage() {
                           <span className="text-sm font-medium text-gray-900">
                             Q{index + 1}.
                           </span>
+                          {section && subsection && (
+                            <>
+                              <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                                {section.name}
+                              </span>
+                              <span className="text-xs text-purple-600 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                                {subsection.name}
+                              </span>
+                            </>
+                          )}
                           {question?.customId && (
                             <span className="font-mono text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
                               {question.customId}

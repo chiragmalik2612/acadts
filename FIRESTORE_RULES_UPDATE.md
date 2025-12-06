@@ -41,3 +41,4 @@ The updated rules now allow:
 2. The enrollment should work without permission errors
 3. Check that the enrollment appears in "My Enrolled Series"
 
+

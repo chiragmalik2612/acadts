@@ -619,37 +619,45 @@ export default function NewQuestionPage() {
                 <p className="text-sm font-medium text-gray-800 mb-2">
                   Options &amp; Correct Answer
                 </p>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   {options.map((opt, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      {type === "mcq_single" ? (
-                        <input
-                          type="radio"
-                          name="correct-option"
-                          className="h-4 w-4"
-                          checked={correctOptions.includes(index)}
-                          onChange={() => handleCorrectOptionToggle(index)}
-                        />
-                      ) : (
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4"
-                          checked={correctOptions.includes(index)}
-                          onChange={() => handleCorrectOptionToggle(index)}
-                        />
-                      )}
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="pt-2">
+                        {type === "mcq_single" ? (
+                          <input
+                            type="radio"
+                            name="correct-option"
+                            className="h-4 w-4"
+                            checked={correctOptions.includes(index)}
+                            onChange={() => handleCorrectOptionToggle(index)}
+                          />
+                        ) : (
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4"
+                            checked={correctOptions.includes(index)}
+                            onChange={() => handleCorrectOptionToggle(index)}
+                          />
+                        )}
+                      </div>
 
-                      <input
-                        type="text"
-                        className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                        value={opt}
-                        onChange={(e) => handleOptionChange(index, e.target.value)}
-                        placeholder={`Option ${index + 1}`}
-                      />
+                      <div className="flex-1">
+                        <RichTextEditor
+                          value={opt}
+                          onChange={(value) => handleOptionChange(index, value)}
+                          placeholder={`Option ${index + 1}... You can use special symbols, equations, and images here.`}
+                          minHeight="200px"
+                          imageFolder={
+                            subjectName && chapterName && topicName && subtopic && type
+                              ? buildImageFolderPath(subjectName, chapterName, topicName, subtopic, type)
+                              : undefined
+                          }
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-3 text-xs text-gray-500">
                   Mark the correct option{type === "mcq_multiple" ? "s" : ""} using{" "}
                   {type === "mcq_multiple" ? "checkboxes" : "the radio button"}.
                 </p>
