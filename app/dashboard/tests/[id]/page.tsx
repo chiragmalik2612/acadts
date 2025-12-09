@@ -7,7 +7,7 @@ import { useUserProfile } from "@/lib/hooks/useUserProfile";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { getTestById } from "@/lib/db/tests";
 import { getQuestionById } from "@/lib/db/questions";
-import { createTestResult } from "@/lib/db/testResults";
+import { createTestResult, getUserTestResult } from "@/lib/db/testResults";
 import { processAnswers } from "@/lib/utils/answerChecker";
 import type { Test } from "@/lib/types/test";
 import type { Question } from "@/lib/types/question";
@@ -65,6 +65,18 @@ export default function TestTakingPage() {
       setError(null);
 
       try {
+        // Check if user has already attempted this test
+        const existingResult = await getUserTestResult(user.uid, testId);
+        if (existingResult) {
+          setError("You have already attempted this test. Redirecting to results...");
+          // Redirect to results page after a short delay
+          setTimeout(() => {
+            router.push(`/dashboard/tests/${testId}/result/${existingResult.id}`);
+          }, 2000);
+          setLoading(false);
+          return;
+        }
+
         const testData = await getTestById(testId);
         if (!testData) {
           setError("Test not found.");

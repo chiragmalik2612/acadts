@@ -10,8 +10,10 @@ import { auth } from "@/lib/firebase/client";
 import { getTestSeriesById } from "@/lib/db/testSeries";
 import { enrollInTestSeries, isEnrolled } from "@/lib/db/students";
 import { getTestById } from "@/lib/db/tests";
+import { getUserTestResults } from "@/lib/db/testResults";
 import type { TestSeries } from "@/lib/types/testSeries";
 import type { Test } from "@/lib/types/test";
+import type { TestResult } from "@/lib/types/testResult";
 import DescriptionRenderer from "@/components/DescriptionRenderer";
 
 export default function TestSeriesDetailsPage() {
@@ -24,6 +26,7 @@ export default function TestSeriesDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
   const [isEnrolledInSeries, setIsEnrolledInSeries] = useState(false);
+  const [testAttemptMap, setTestAttemptMap] = useState<Map<string, TestResult>>(new Map());
 
   const seriesId = params.id as string;
 
@@ -59,6 +62,14 @@ export default function TestSeriesDetailsPage() {
         // Check if enrolled
         const enrolled = await isEnrolled(user.uid, seriesId);
         setIsEnrolledInSeries(enrolled);
+
+        // Load test results to check attempts
+        const results = await getUserTestResults(user.uid);
+        const attemptMap = new Map<string, TestResult>();
+        results.forEach((result) => {
+          attemptMap.set(result.testId, result);
+        });
+        setTestAttemptMap(attemptMap);
 
         // Load test details
         if (series.testIds && series.testIds.length > 0) {
@@ -255,14 +266,34 @@ export default function TestSeriesDetailsPage() {
                           <p className="text-sm text-gray-600 mt-2">{test.description}</p>
                         )}
                       </div>
-                      {isEnrolledInSeries && (
-                        <button
-                          onClick={() => router.push(`/dashboard/tests/${test.id}`)}
-                          className="px-4 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all ml-4"
-                        >
-                          Start Test
-                        </button>
-                      )}
+                      {isEnrolledInSeries && (() => {
+                        const hasAttempted = testAttemptMap.has(test.id);
+                        const result = testAttemptMap.get(test.id);
+                        const percentage = result 
+                          ? (result.totalMarksObtained / result.totalMarksPossible) * 100 
+                          : 0;
+                        
+                        return hasAttempted ? (
+                          <div className="flex flex-col items-end gap-2 ml-4">
+                            <button
+                              onClick={() => router.push(`/dashboard/tests/${test.id}/result/${result?.id}`)}
+                              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all"
+                            >
+                              View Result
+                            </button>
+                            <span className="text-xs text-gray-500">
+                              Score: {percentage.toFixed(1)}%
+                            </span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => router.push(`/dashboard/tests/${test.id}`)}
+                            className="px-4 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all ml-4"
+                          >
+                            Start Test
+                          </button>
+                        );
+                      })()}
                     </div>
                   ))}
                 </div>

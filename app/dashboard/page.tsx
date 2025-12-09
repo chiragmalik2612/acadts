@@ -12,6 +12,8 @@ import type { TestSeries } from "@/lib/types/testSeries";
 import type { EnrollmentWithSeries } from "@/lib/db/students";
 import { getTestById } from "@/lib/db/tests";
 import type { Test } from "@/lib/types/test";
+import { getUserTestResults, getUserTestResult } from "@/lib/db/testResults";
+import type { TestResult } from "@/lib/types/testResult";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -21,10 +23,13 @@ export default function DashboardPage() {
   const [enrolledSeries, setEnrolledSeries] = useState<EnrollmentWithSeries[]>([]);
   const [loadingSeries, setLoadingSeries] = useState(true);
   const [enrollingId, setEnrollingId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"available" | "enrolled">("available");
+  const [activeTab, setActiveTab] = useState<"available" | "enrolled" | "attempts">("available");
   const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
   const [seriesTests, setSeriesTests] = useState<Test[]>([]);
   const [loadingTests, setLoadingTests] = useState(false);
+  const [testResults, setTestResults] = useState<TestResult[]>([]);
+  const [loadingResults, setLoadingResults] = useState(false);
+  const [testAttemptMap, setTestAttemptMap] = useState<Map<string, TestResult>>(new Map());
 
   // All hooks must be called before any early returns
   const handleLogout = useCallback(async () => {
@@ -43,16 +48,18 @@ export default function DashboardPage() {
     }
   }, [user, router]);
 
-  // Load test series
+  // Load test series and results
   useEffect(() => {
     if (!user || authLoading || profileLoading) return;
 
     const loadData = async () => {
       setLoadingSeries(true);
+      setLoadingResults(true);
       try {
-        const [available, enrolled] = await Promise.all([
+        const [available, enrolled, results] = await Promise.all([
           getAvailableTestSeries(),
           getUserEnrollments(user.uid),
+          getUserTestResults(user.uid),
         ]);
         
         // Filter out enrolled series from available list
@@ -61,10 +68,19 @@ export default function DashboardPage() {
         
         setAvailableSeries(notEnrolled);
         setEnrolledSeries(enrolled);
+        setTestResults(results);
+        
+        // Create a map of testId -> TestResult for quick lookup
+        const attemptMap = new Map<string, TestResult>();
+        results.forEach((result) => {
+          attemptMap.set(result.testId, result);
+        });
+        setTestAttemptMap(attemptMap);
       } catch (error) {
-        console.error("[DashboardPage] Error loading test series:", error);
+        console.error("[DashboardPage] Error loading data:", error);
       } finally {
         setLoadingSeries(false);
+        setLoadingResults(false);
       }
     };
 
@@ -204,6 +220,19 @@ export default function DashboardPage() {
             }`}
           >
             My Enrolled Series ({enrolledSeries.length})
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("attempts");
+              setSelectedSeriesId(null);
+            }}
+            className={`px-6 py-3 font-semibold transition-colors ${
+              activeTab === "attempts"
+                ? "text-[#ff6b35] border-b-2 border-[#ff6b35]"
+                : "text-gray-600 hover:text-[#ff6b35]"
+            }`}
+          >
+            My Attempts ({testResults.length})
           </button>
         </div>
 
@@ -362,25 +391,47 @@ export default function DashboardPage() {
                               <p className="text-center text-gray-600 py-4">No tests available in this series.</p>
                             ) : (
                               <div className="space-y-3">
-                                {seriesTests.map((test) => (
-                                  <div
-                                    key={test.id}
-                                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                  >
-                                    <div>
-                                      <h4 className="font-semibold text-gray-900">{test.title}</h4>
-                                      <p className="text-sm text-gray-600">
-                                        {test.durationMinutes} min • {test.questions?.length || 0} Questions
-                                      </p>
-                                    </div>
-                                    <button
-                                      onClick={() => router.push(`/dashboard/tests/${test.id}`)}
-                                      className="px-4 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all"
+                                {seriesTests.map((test) => {
+                                  const hasAttempted = testAttemptMap.has(test.id);
+                                  const result = testAttemptMap.get(test.id);
+                                  const percentage = result 
+                                    ? (result.totalMarksObtained / result.totalMarksPossible) * 100 
+                                    : 0;
+                                  
+                                  return (
+                                    <div
+                                      key={test.id}
+                                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                                     >
-                                      Start Test
-                                    </button>
-                                  </div>
-                                ))}
+                                      <div className="flex-1">
+                                        <h4 className="font-semibold text-gray-900">{test.title}</h4>
+                                        <p className="text-sm text-gray-600">
+                                          {test.durationMinutes} min • {test.questions?.length || 0} Questions
+                                        </p>
+                                        {hasAttempted && result && (
+                                          <p className="text-xs text-gray-500 mt-1">
+                                            Attempted • Score: {result.totalMarksObtained.toFixed(2)}/{result.totalMarksPossible.toFixed(2)} ({percentage.toFixed(1)}%)
+                                          </p>
+                                        )}
+                                      </div>
+                                      {hasAttempted ? (
+                                        <button
+                                          onClick={() => router.push(`/dashboard/tests/${test.id}/result/${result?.id}`)}
+                                          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all"
+                                        >
+                                          View Result
+                                        </button>
+                                      ) : (
+                                        <button
+                                          onClick={() => router.push(`/dashboard/tests/${test.id}`)}
+                                          className="px-4 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all"
+                                        >
+                                          Start Test
+                                        </button>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
                             )}
                           </div>
@@ -389,6 +440,110 @@ export default function DashboardPage() {
                     </div>
                   );
                 })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* My Attempts Tab */}
+        {activeTab === "attempts" && (
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">My Test Attempts</h2>
+            {loadingResults ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">Loading attempts...</p>
+              </div>
+            ) : testResults.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 text-lg">You haven't attempted any tests yet.</p>
+                <button
+                  onClick={() => setActiveTab("enrolled")}
+                  className="mt-4 px-6 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-semibold transition-all"
+                >
+                  View Enrolled Series
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {testResults
+                  .sort((a, b) => {
+                    const aTime = a.submittedAt?.toMillis() || 0;
+                    const bTime = b.submittedAt?.toMillis() || 0;
+                    return bTime - aTime; // Most recent first
+                  })
+                  .map((result) => {
+                    const percentage = (result.totalMarksObtained / result.totalMarksPossible) * 100;
+                    const submittedDate = result.submittedAt?.toDate();
+                    const formattedDate = submittedDate
+                      ? submittedDate.toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Unknown date";
+                    
+                    return (
+                      <div
+                        key={result.id}
+                        className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{result.testTitle}</h3>
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                              <span>Submitted: {formattedDate}</span>
+                              <span>•</span>
+                              <span>Duration: {Math.floor(result.timeSpentSeconds / 60)} min</span>
+                              <span>•</span>
+                              <span>{result.totalQuestions} Questions</span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className={`text-2xl font-bold ${
+                              percentage >= 70 ? "text-green-600" :
+                              percentage >= 50 ? "text-yellow-600" :
+                              "text-red-600"
+                            }`}>
+                              {percentage.toFixed(1)}%
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {result.totalMarksObtained.toFixed(2)} / {result.totalMarksPossible.toFixed(2)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Statistics */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                          <div className="bg-green-50 rounded-lg p-3">
+                            <div className="text-xs text-gray-600 mb-1">Correct</div>
+                            <div className="text-lg font-bold text-green-700">{result.correctAnswers}</div>
+                          </div>
+                          <div className="bg-red-50 rounded-lg p-3">
+                            <div className="text-xs text-gray-600 mb-1">Incorrect</div>
+                            <div className="text-lg font-bold text-red-700">{result.incorrectAnswers}</div>
+                          </div>
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <div className="text-xs text-gray-600 mb-1">Not Answered</div>
+                            <div className="text-lg font-bold text-gray-700">{result.notAnswered}</div>
+                          </div>
+                          <div className="bg-blue-50 rounded-lg p-3">
+                            <div className="text-xs text-gray-600 mb-1">Answered</div>
+                            <div className="text-lg font-bold text-blue-700">{result.answeredQuestions}</div>
+                          </div>
+                        </div>
+
+                        {/* Action Button */}
+                        <button
+                          onClick={() => router.push(`/dashboard/tests/${result.testId}/result/${result.id}`)}
+                          className="w-full px-4 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all"
+                        >
+                          View Detailed Result
+                        </button>
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </div>
