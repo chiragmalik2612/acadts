@@ -376,7 +376,7 @@ export default function ViewTestPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex min-h-screen">
         {/* Side Panel */}
         <div className="w-64 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
           {/* Side Panel Header */}
@@ -401,10 +401,16 @@ export default function ViewTestPage() {
 
           {/* Navigation Tree */}
           <div className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-2">
-              {test.sections
-                ?.sort((a, b) => a.order - b.order)
-                .map((section) => {
+            {!test.sections || test.sections.length === 0 ? (
+              <div className="text-center py-8 text-gray-500 text-sm">
+                <p>No sections defined</p>
+                <p className="text-xs mt-2">Add sections to organize questions</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {test.sections
+                  .sort((a, b) => a.order - b.order)
+                  .map((section) => {
                   const sectionQuestions = test.questions.filter(
                     (q) => q.sectionId === section.id
                   );
@@ -469,23 +475,27 @@ export default function ViewTestPage() {
                     </div>
                   );
                 })}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-screen">
           {/* Header */}
           <div className="bg-white border-b border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-xl font-semibold text-gray-900">
-                  {selectedSection?.name || "Select Section"}
+                  {!test.sections || test.sections.length === 0
+                    ? "Test Overview"
+                    : selectedSection?.name || "Select Section"}
                   {selectedSubsection && ` • ${selectedSubsection.name}`}
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">
-                  {filteredQuestions.length} question
-                  {filteredQuestions.length !== 1 ? "s" : ""}
+                  {!test.sections || test.sections.length === 0
+                    ? `${test.questions.length} total questions`
+                    : `${filteredQuestions.length} question${filteredQuestions.length !== 1 ? "s" : ""}`}
                 </p>
               </div>
               {selectedSectionId && selectedSubsectionId && (
@@ -521,7 +531,105 @@ export default function ViewTestPage() {
 
           {/* Questions List */}
           <div className="flex-1 overflow-y-auto p-4">
-            {!selectedSectionId || !selectedSubsectionId ? (
+            {(!test.sections || test.sections.length === 0) ? (
+              <div className="space-y-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-sm text-yellow-800">
+                    This test doesn't have sections defined. All questions are shown below.
+                  </p>
+                </div>
+                {test.questions.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <p className="text-gray-500 mb-4">No questions in this test yet.</p>
+                    <p className="text-sm text-gray-400">Please add sections and subsections to organize questions.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {test.questions
+                      .sort((a, b) => a.order - b.order)
+                      .map((tq, index) => {
+                        const question = questions.get(tq.questionId);
+                        if (!question) return null;
+
+                        return (
+                          <div
+                            key={tq.questionId}
+                            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                  <span className="text-sm font-semibold text-gray-900">
+                                    Q{index + 1}.
+                                  </span>
+                                  {question.customId && (
+                                    <span className="font-mono text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
+                                      {question.customId}
+                                    </span>
+                                  )}
+                                  <span className="text-xs text-gray-600">
+                                    {question.subject}
+                                    {question.chapter && ` / ${question.chapter}`}
+                                    {question.topic && ` / ${question.topic}`}
+                                  </span>
+                                  <span className="text-xs px-2 py-0.5 rounded bg-gray-200 text-gray-700">
+                                    {question.type === "mcq_single"
+                                      ? "MCQ (Single)"
+                                      : question.type === "mcq_multiple"
+                                      ? "MCQ (Multiple)"
+                                      : "Numerical"}
+                                  </span>
+                                </div>
+                                <div
+                                  className="text-sm text-gray-700 line-clamp-3 question-content"
+                                  dangerouslySetInnerHTML={{
+                                    __html: question.text,
+                                  }}
+                                />
+                              </div>
+                              <div className="ml-4 flex flex-col items-end gap-2">
+                                <div className="text-right">
+                                  <div className="text-xs text-gray-500 mb-1">Scoring</div>
+                                  <div className="flex items-center gap-2 justify-end">
+                                    <span className="text-sm font-semibold text-green-600">
+                                      +{tq.marks}
+                                    </span>
+                                    {tq.negativeMarks > 0 ? (
+                                      <span className="text-sm font-semibold text-red-600">
+                                        -{tq.negativeMarks}
+                                      </span>
+                                    ) : (
+                                      <span className="text-xs text-gray-400">(no penalty)</span>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() =>
+                                      router.push(
+                                        `/admin/questions/${question.id}?fromTest=${testId}`
+                                      )
+                                    }
+                                    className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                                  >
+                                    View
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteFromTest(question.id)}
+                                    className="text-xs px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-50 transition-colors"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+              </div>
+            ) : !selectedSectionId || !selectedSubsectionId ? (
               <div className="flex items-center justify-center h-full">
                 <p className="text-gray-500">Select a section and subsection to view questions</p>
               </div>
