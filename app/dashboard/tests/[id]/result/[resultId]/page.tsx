@@ -34,6 +34,8 @@ export default function TestResultPage() {
   const [questions, setQuestions] = useState<QuestionWithResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<string>("all");
+  const [subjects, setSubjects] = useState<string[]>([]);
 
   // Load test result and questions
   useEffect(() => {
@@ -41,11 +43,6 @@ export default function TestResultPage() {
 
     if (!user) {
       router.replace("/login");
-      return;
-    }
-
-    if (role === "admin") {
-      router.replace("/admin");
       return;
     }
 
@@ -62,8 +59,8 @@ export default function TestResultPage() {
           return;
         }
 
-        // Verify this result belongs to the current user
-        if (result.userId !== user.uid) {
+        // Verify this result belongs to the current user (unless admin)
+        if (role !== "admin" && result.userId !== user.uid) {
           setError("You don't have permission to view this result.");
           setLoading(false);
           return;
@@ -116,6 +113,10 @@ export default function TestResultPage() {
         });
 
         setQuestions(validQuestions);
+
+        // Extract unique subjects
+        const uniqueSubjects = Array.from(new Set(validQuestions.map(q => q.subject))).sort();
+        setSubjects(uniqueSubjects);
       } catch (err) {
         console.error("[TestResultPage] Error loading result:", err);
         setError(err instanceof Error ? err.message : "Failed to load test result.");
@@ -171,6 +172,42 @@ export default function TestResultPage() {
     return (testResult.totalMarksObtained / testResult.totalMarksPossible) * 100;
   }, [testResult]);
 
+  // Filter questions by selected subject
+  const filteredQuestions = useMemo(() => {
+    if (selectedSubject === "all") return questions;
+    return questions.filter(q => q.subject === selectedSubject);
+  }, [questions, selectedSubject]);
+
+  // Calculate subject-wise statistics
+  const subjectStats = useMemo(() => {
+    if (selectedSubject === "all") return null;
+
+    const subjectQuestions = questions.filter(q => q.subject === selectedSubject);
+    const correct = subjectQuestions.filter(q => q.result.isCorrect).length;
+    const incorrect = subjectQuestions.filter(q => q.result.studentAnswer !== null && !q.result.isCorrect).length;
+    const unanswered = subjectQuestions.filter(q => q.result.studentAnswer === null).length;
+    const total = subjectQuestions.length;
+    const marksObtained = subjectQuestions.reduce((sum, q) => sum + q.result.marksObtained, 0);
+    // Calculate possible marks from test questions
+    const marksPossible = subjectQuestions.reduce((sum, q) => {
+      const testQuestion = test?.questions.find(tq => tq.questionId === q.id);
+      if (!testQuestion) return sum;
+      // For possible marks, we need to consider the positive marks only
+      // Since marksObtained can be negative, we calculate possible as the positive marks value
+      return sum + testQuestion.marks;
+    }, 0);
+
+    return {
+      total,
+      correct,
+      incorrect,
+      unanswered,
+      marksObtained,
+      marksPossible,
+      percentage: marksPossible > 0 ? (marksObtained / marksPossible) * 100 : 0,
+    };
+  }, [selectedSubject, questions, testResult, test]);
+
   // Loading state
   if (authLoading || profileLoading || loading) {
     return (
@@ -191,10 +228,10 @@ export default function TestResultPage() {
             <h1 className="text-xl font-semibold text-gray-900 mb-2">Error</h1>
             <p className="text-sm text-gray-600 mb-4">{error || "Failed to load test result."}</p>
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push(role === "admin" ? "/admin" : "/dashboard")}
               className="px-4 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all"
             >
-              Back to Dashboard
+              {role === "admin" ? "Back to Admin Panel" : "Back to Dashboard"}
             </button>
           </div>
         </div>
@@ -240,12 +277,132 @@ export default function TestResultPage() {
           </div>
         </div>
 
+        {/* Subject Filter and Analysis (Admin Only) */}
+        {role === "admin" && subjects.length > 0 && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Subject Analysis</h2>
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-700">Filter by Subject:</label>
+                <select
+                  value={selectedSubject}
+                  onChange={(e) => setSelectedSubject(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Subjects</option>
+                  {subjects.map((subject) => (
+                    <option key={subject} value={subject}>
+                      {subject}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Subject-wise Statistics */}
+            {selectedSubject !== "all" && subjectStats && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="text-center">
+                  <div className="text-xs font-medium text-blue-700 mb-1">Total Questions</div>
+                  <div className="text-2xl font-bold text-blue-900">{subjectStats.total}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-medium text-green-700 mb-1">Correct</div>
+                  <div className="text-2xl font-bold text-green-700">{subjectStats.correct}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-medium text-red-700 mb-1">Incorrect</div>
+                  <div className="text-2xl font-bold text-red-700">{subjectStats.incorrect}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-medium text-gray-700 mb-1">Not Answered</div>
+                  <div className="text-2xl font-bold text-gray-700">{subjectStats.unanswered}</div>
+                </div>
+                <div className="col-span-2 md:col-span-4 mt-2 pt-4 border-t border-blue-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-medium text-blue-700 mb-1">Marks</div>
+                      <div className="text-lg font-bold text-blue-900">
+                        {subjectStats.marksObtained.toFixed(2)} / {subjectStats.marksPossible.toFixed(2)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-blue-700 mb-1">Score</div>
+                      <div className="text-lg font-bold text-blue-900">
+                        {subjectStats.percentage.toFixed(1)}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* All Subjects Overview */}
+            {selectedSubject === "all" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                {subjects.map((subject) => {
+                  const subjectQuestions = questions.filter(q => q.subject === subject);
+                  const correct = subjectQuestions.filter(q => q.result.isCorrect).length;
+                  const incorrect = subjectQuestions.filter(q => q.result.studentAnswer !== null && !q.result.isCorrect).length;
+                  const unanswered = subjectQuestions.filter(q => q.result.studentAnswer === null).length;
+                  const total = subjectQuestions.length;
+
+                  return (
+                    <div
+                      key={subject}
+                      className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors cursor-pointer"
+                      onClick={() => setSelectedSubject(subject)}
+                    >
+                      <div className="font-semibold text-gray-900 mb-3">{subject}</div>
+                      <div className="grid grid-cols-3 gap-2 text-sm">
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600 mb-1">Total</div>
+                          <div className="font-bold text-gray-900">{total}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-green-600 mb-1">Correct</div>
+                          <div className="font-bold text-green-700">{correct}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-red-600 mb-1">Wrong</div>
+                          <div className="font-bold text-red-700">{incorrect}</div>
+                        </div>
+                        <div className="col-span-3 text-center pt-2 border-t border-gray-300">
+                          <div className="text-xs text-gray-600 mb-1">Not Answered</div>
+                          <div className="font-bold text-gray-700">{unanswered}</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Questions List */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Question-wise Results</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {role === "admin" && selectedSubject !== "all" 
+                ? `Questions - ${selectedSubject}` 
+                : "Question-wise Results"}
+            </h2>
+            {role === "admin" && selectedSubject !== "all" && (
+              <button
+                onClick={() => setSelectedSubject("all")}
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Show All Questions
+              </button>
+            )}
+          </div>
           
           <div className="space-y-6">
-            {questions.map((question, index) => {
+            {filteredQuestions.map((question, index) => {
+              // Calculate actual index - use original question index from test result
+              const response = testResult?.responses.find(r => r.questionId === question.id);
+              const actualIndex = response?.questionIndex !== undefined ? response.questionIndex + 1 : index + 1;
               const isCorrect = question.result.isCorrect;
               const hasAnswer = question.result.studentAnswer !== null;
               
@@ -258,8 +415,13 @@ export default function TestResultPage() {
                 >
                   {/* Question Header */}
                   <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg font-bold text-gray-900">Q{index + 1}</span>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="text-lg font-bold text-gray-900">Q{actualIndex}</span>
+                      {role === "admin" && (
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                          {question.subject}
+                        </span>
+                      )}
                       <span className={`px-2 py-1 rounded text-xs font-semibold ${
                         isCorrect
                           ? "bg-green-200 text-green-800"
@@ -380,17 +542,27 @@ export default function TestResultPage() {
 
         {/* Action Buttons */}
         <div className="mt-6 flex gap-4 justify-center">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="px-6 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all"
-          >
-            Back to Dashboard
-          </button>
+          {role === "admin" ? (
+            <button
+              onClick={() => router.push("/admin")}
+              className="px-6 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all"
+            >
+              Back to Admin Panel
+            </button>
+          ) : (
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="px-6 py-2 bg-[#ff6b35] hover:bg-yellow-400 text-white rounded-lg font-medium transition-all"
+            >
+              Back to Dashboard
+            </button>
+          )}
         </div>
       </div>
     </main>
   );
 }
+
 
 
 
